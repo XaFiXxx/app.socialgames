@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importe useNavigate
 
 function Register() {
+  const navigate = useNavigate(); // Utilise useNavigate pour la redirection
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -13,19 +15,18 @@ function Register() {
     const { name, value } = e.target;
     setFormData(prevFormData => ({
       ...prevFormData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Modifier l'URL en fonction de ton endpoint d'API pour l'inscription
       const response = await axios.post('http://localhost:8000/api/register', formData);
       console.log(response.data);
-      // Traiter la réponse comme il se doit (redirection, messages d'état, etc.)
+      navigate('/login'); // Redirige vers la page de connexion après une inscription réussie
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error);
+      console.error("Erreur lors de l'inscription:", error.response || error);
     }
   };
 
@@ -33,7 +34,7 @@ function Register() {
     <div className="min-h-screen bg-gray-800 flex justify-center items-center">
       <div className="max-w-md w-full">
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
+        <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
               Nom d'utilisateur
             </label>
