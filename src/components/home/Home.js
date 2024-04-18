@@ -1,43 +1,40 @@
 import React from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import GamesIndex from '../games/GamesIndex';
 
 function Home() {
+  // Fonction pour afficher le toast
+  const showToast = () => {
+    toast("Voici votre toast de test !", {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   return (
-    <div className="bg-gray-700 text-white">
+    <div className="bg-gray-800 text-gray-200">
+      <ToastContainer />
       {/* Hero section */}
       <section className="text-center py-20">
         <h1 className="text-5xl font-bold mb-4">Bienvenue sur GameSocial</h1>
         <p className="text-xl mb-8">Le réseau social pour les passionnés de jeux vidéo.</p>
+        <button onClick={showToast} className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition duration-300">
+          Test Toast
+        </button>
       </section>
 
-      {/* Popular Games section */}
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-6">Jeux Populaires</h2>
-          {/* Game cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Dynamic game cards go here */}
-          </div>
-        </div>
+      {/* Games section */}
+      <section className="container mx-auto px-4 pb-6">
+      <GamesIndex />
       </section>
 
-      {/* Latest News section */}
-      <section className="bg-gray-800 py-10">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-6">Dernières Actualités</h2>
-          {/* News cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Dynamic news cards go here */}
-          </div>
-        </div>
-      </section>
-
-      {/* Community section */}
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-6">Communauté</h2>
-          {/* Community highlights or discussion threads */}
-        </div>
-      </section>
     </div>
   );
 }
