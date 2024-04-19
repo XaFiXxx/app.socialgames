@@ -2,8 +2,6 @@ import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import GamesIndex from '../games/GamesIndex';
-
 function Home() {
   // Fonction pour afficher le toast
   const showToast = () => {
@@ -19,7 +17,7 @@ function Home() {
   };
 
   return (
-    <div className="bg-gray-800 text-gray-200">
+    <div className="bg-gray-800 text-gray-200 min-h-screen">
       <ToastContainer />
       {/* Hero section */}
       <section className="text-center py-20">
@@ -28,11 +26,6 @@ function Home() {
         <button onClick={showToast} className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition duration-300">
           Test Toast
         </button>
-      </section>
-
-      {/* Games section */}
-      <section className="container mx-auto px-4 pb-6">
-      <GamesIndex />
       </section>
 
     </div>

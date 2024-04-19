@@ -56,13 +56,12 @@ function Navbar() {
             <span className="tooltiptext">Liste des jeux vidéos</span>
           </Link>
 
-          {isAuthenticated && user ? (
+          {isAuthenticated ? (
             <div className="relative"
                  onMouseEnter={openDropdown}
                  onMouseLeave={closeDropdown}>
               <button className="flex items-center focus:outline-none">
-                {/* <span className="mr-2">{user.username}</span> */}
-                <img src={user.avatar_url ? `/img/${user.avatar_url}` : "/img/defaultUser.webp"} alt="Avatar" className="w-12 h-12 rounded-full" />
+                <img src={user?.avatar_url ? `http://127.0.0.1:8000/${user.avatar_url}` : "/img/defaultUser.webp"} alt="Avatar" className="w-12 h-12 rounded-full" />
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 py-2 w-48 bg-green-500 rounded shadow-lg z-50">
@@ -73,14 +72,10 @@ function Navbar() {
               )}
             </div>
           ) : (
-            <ul className="flex space-x-4">
-              <li>
-                <Link to="/register" className="hover:text-gray-300">Inscription</Link>
-              </li>
-              <li>
-                <Link to="/login" className="hover:text-gray-300">Connexion</Link>
-              </li>
-            </ul>
+            <>
+              <Link to="/register" className="hover:text-gray-300">Inscription</Link>
+              <Link to="/login" className="hover:text-gray-300">Connexion</Link>
+            </>
           )}
         </div>
       </div>

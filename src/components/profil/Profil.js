@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../context/AuthContext'; // Assurez-vous que cette importation est correcte
+import { useAuth } from '../../context/AuthContext';
 
 function Profile() {
-  const { user } = useAuth(); // Cela devrait fournir les détails de l'utilisateur authentifié, y compris le token si nécessaire
-
+  const { user } = useAuth();
   const [profileData, setProfileData] = useState({
+    username: '',
+    biography: '',
+    avatar_url: '',
     favoriteGames: [],
     posts: [],
     friends: []
   });
 
   useEffect(() => {
-    // S'assurer que l'utilisateur est défini et a un id
-    if (user && user.id) {
+    if (user?.id) {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`http://localhost:8000/api/users/${user.id}/profile`);
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:8000/api/users/${user.id}/profile`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
           setProfileData({
-            favoriteGames: response.data.games,
-            posts: response.data.posts,
-            friends: response.data.friends
+            ...response.data,
+            favoriteGames: response.data.games || [],
+            posts: response.data.posts || [],
+            friends: response.data.friends || []
           });
         } catch (error) {
           console.error('Erreur lors de la récupération des données:', error);
@@ -38,12 +43,12 @@ function Profile() {
       <div className="container mx-auto p-4">
         <div className="flex flex-col items-center">
           <img
-            src={user.avatar_url ? `/img/${user.avatar_url}` : "/img/defaultUser.webp"}
-            alt={user.username}
+            src={profileData.avatar_url ? `http://127.0.0.1:8000/${profileData.avatar_url}` : "/img/defaultUser.webp"}
+            alt={profileData.username}
             className="rounded-full w-32 h-32 object-cover"
           />
-          <h1 className="text-2xl font-bold mt-4">{user.username || "Username"}</h1>
-          <p className="text-gray-400">Bio de l'utilisateur ici...</p>
+          <h1 className="text-2xl font-bold mt-4">{profileData.username}</h1>
+          <p className="text-gray-400">{profileData.biography}</p>
         </div>
 
         <div className="mt-8">
@@ -51,7 +56,7 @@ function Profile() {
           <div className="grid grid-cols-3 gap-4">
             {profileData.favoriteGames.map(game => (
               <div key={game.id} className="card">
-               <img src={`/img/${game.cover_image}`} alt={game.name} className="w-full h-32 object-cover rounded-lg" />
+               <img src={`http://127.0.0.1:8000/${game.cover_image}`} alt={game.name} className="w-full h-32 object-cover rounded-lg" />
                 <div className="p-2 text-center">{game.name}</div>
               </div>
             ))}

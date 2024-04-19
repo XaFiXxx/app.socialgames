@@ -1,7 +1,9 @@
+// GamesIndex.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Assurez-vous que le CSS est importé
+import GameCard from './GameCard'; // Assure-toi que le chemin d'importation est correct
+import 'react-toastify/dist/ReactToastify.css';
 
 function GamesIndex() {
   const [games, setGames] = useState([]);
@@ -9,8 +11,13 @@ function GamesIndex() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/games/index');
-        setGames(response.data); // Supposons que cela retourne un tableau de jeux
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8000/api/games/index', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setGames(response.data);
       } catch (error) {
         console.error('Erreur lors de la récupération des jeux:', error);
         toast.error('Impossible de récupérer les jeux.');
@@ -18,21 +25,15 @@ function GamesIndex() {
     };
     fetchGames();
   }, []);
+  
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 min-h-screen">
       <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnHover draggable />
       <h2 className="text-4xl font-bold mb-6">Jeux Populaires</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid bg-gray-800 grid-cols-1 md:grid-cols-3 gap-6">
         {games.map(game => (
-          <div key={game.id} className="bg-white p-4 rounded-lg shadow-md">
-            <img src={`/img/${game.cover_image}`} alt={game.name} className="w-full h-64 object-cover rounded-t-lg" />
-            <div className="p-4">
-              <h3 className="text-lg font-bold text-gray-900">{game.name}</h3>
-              <p className='text-gray-900'>{game.description}</p>
-              {/* Other game details if necessary */}
-            </div>
-          </div>
+          <GameCard key={game.id} game={game} />
         ))}
       </div>
     </div>
