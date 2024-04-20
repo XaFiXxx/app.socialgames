@@ -52,7 +52,7 @@ function Navbar() {
         </div>
         <div className="flex items-center space-x-4">
           <Link to="/games" className="tooltip hover:text-blue-300 text-xl">
-            <img src="/img/videoGamesLogoT.webp" alt="Icone manette" className="w-12 h-12" />
+            <img src="/img/videoGamesLogoT.webp" alt="Icone manette" className="w-14 h-14" />
             <span className="tooltiptext">Liste des jeux vidéos</span>
           </Link>
 

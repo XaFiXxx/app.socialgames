@@ -11,9 +11,10 @@ function Register() {
     email: '',
     password: '',
     location: '',
+    birthday: '', // Sera une chaîne de caractères au format 'YYYY-MM-DD'
   });
 
-  const [file, setFile] = useState(null); // Pour gérer le fichier de l'avatar
+  const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,28 +25,32 @@ function Register() {
   };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // Gérer le fichier directement
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Crée un objet FormData et y ajoute les valeurs du formulaire
     const data = new FormData();
-    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+    for (const [key, value] of Object.entries(formData)) {
+      data.append(key, value);
+    }
     if (file) {
-      data.append('avatar', file); // Ajouter le fichier à l'objet FormData
+      data.append('avatar', file);
     }
 
     try {
       await axios.post('http://localhost:8000/api/register', data, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
       toast.success('Inscription réussie !');
       navigate('/login');
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error.response || error);
       toast.error('Erreur lors de l\'inscription.');
+      console.error("Erreur lors de l'inscription:", error.response || error);
     }
   };
 
@@ -104,6 +109,19 @@ function Register() {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Pays (facultatif)"
                 value={formData.location}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="birthday" className="sr-only">Date de naissance</label>
+              <input
+                type="date"
+                id="birthday"
+                name="birthday"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Date de naissance"
+                value={formData.birthday}
                 onChange={handleChange}
               />
             </div>
