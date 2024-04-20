@@ -19,15 +19,15 @@ function Profile() {
   });
 
   useEffect(() => {
-    if (user?.id) {
-      const fetchData = async () => {
+    const fetchData = async () => {
+      if (user?.id) {
         try {
           const token = localStorage.getItem('token');
           const response = await axios.get(`http://localhost:8000/api/users/${user.id}/profile`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (response.data) {
-            setProfileData(response.data); // Directly setting the data
+            setProfileData(response.data);
           } else {
             throw new Error('Data not found');
           }
@@ -35,11 +35,18 @@ function Profile() {
           console.error('Erreur lors de la récupération des données:', error);
           toast.error("Impossible de récupérer les données de l'utilisateur.");
         }
-      };
-
-      fetchData();
-    }
+      }
+    };
+  
+    fetchData();
   }, [user]);
+
+  const handleNewPost = (newPost) => {
+    setProfileData(prevData => ({
+      ...prevData,
+      posts: [newPost, ...prevData.posts]
+    }));
+  };
 
   return (
     <div className="bg-gray-900 text-gray-700 min-h-screen">
@@ -52,7 +59,7 @@ function Profile() {
           />
           <div className="absolute bottom-0 transform translate-y-1/2 bg-white border-4 border-white rounded-full">
             <img
-              src={`http://localhost:8000/${profileData.avatar_url || "img/defaultAvatar.jpg"}`}
+              src={`http://localhost:8000/${profileData.avatar_url}`}
               alt="Profil"
               className="h-40 w-40 rounded-full object-cover"
             />
@@ -70,12 +77,12 @@ function Profile() {
           </button>
         </div>
 
-        <PostForm />
+        <PostForm onPostSubmit={handleNewPost} />
         <Posts posts={profileData.posts || []} />
 
         <div className="mt-8">
-        <h2 className="text-xl text-gray-200 font-bold">Jeux préférés</h2>
-        <Jeux games={profileData.games || []} />
+          <h2 className="text-xl text-gray-200 font-bold">Jeux préférés</h2>
+          <Jeux games={profileData.games || []} />
         </div>
       </div>
     </div>
