@@ -1,9 +1,12 @@
 import React from 'react';
 
 function Jeux({ games }) {
+
+  if (!Array.isArray(games) || !games.length) {
+    return <p className="text-gray-300  mt-4">Aucun jeux à afficher.</p>;
+  }
+
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold">Jeux préférés</h2>
       <div className="grid grid-cols-3 gap-4">
         {games.map(game => (
           <div key={game.id} className="card">
@@ -12,7 +15,6 @@ function Jeux({ games }) {
           </div>
         ))}
       </div>
-    </div>
   );
 }
 

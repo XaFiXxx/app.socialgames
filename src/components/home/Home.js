@@ -1,6 +1,7 @@
 import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PostForm from '../posts/PostForm';
 
 function Home() {
   // Fonction pour afficher le toast
@@ -27,6 +28,12 @@ function Home() {
           Test Toast
         </button>
       </section>
+      
+      {/* Post form */}
+      <section className="container mx-auto p-4">
+        <PostForm />
+      </section>
+
 
     </div>
   );
