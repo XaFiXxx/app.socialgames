@@ -77,7 +77,11 @@ function Profile() {
           </button>
         </div>
 
+        <div className="mt-4 w-full max-w-4xl mx-auto ">
         <PostForm onPostSubmit={handleNewPost} />
+        </div>
+
+
         <Posts posts={profileData.posts || []} />
 
         <div className="mt-8">

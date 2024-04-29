@@ -6,6 +6,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function GamesIndex() {
   const [games, setGames] = useState([]);
+  // Obtenir la chaîne JSON stockée sous la clé 'user'
+const userStr = localStorage.getItem('user');
+
+// Parser la chaîne JSON pour obtenir un objet JavaScript
+const user = userStr ? JSON.parse(userStr) : null;
+
+// Accéder à l'ID de l'utilisateur
+const userId = user ? user.id : null;
 
   // Déclaration de fetchGames en dehors de useEffect pour la réutiliser
   const fetchGames = async () => {
@@ -52,7 +60,7 @@ function GamesIndex() {
       <h2 className="text-4xl font-bold mb-6 pt-4">Jeux Populaires</h2>
       <div className="grid bg-gray-800 grid-cols-1 md:grid-cols-3 gap-6">
         {games.map(game => (
-          <GameCard key={game.id} game={game} onToggleFollow={handleToggleFollow} />
+          <GameCard key={game.id} game={game} onToggleFollow={handleToggleFollow} userId={userId} />
         ))}
       </div>
     </div>

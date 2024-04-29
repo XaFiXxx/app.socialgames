@@ -1,8 +1,8 @@
 import React from 'react';
 
-const GameCard = ({ game, onToggleFollow }) => {
-  // Détermine si le jeu est suivi en vérifiant la liste des utilisateurs associés
-  const isFollowed = game.users?.some(user => user.pivot.is_wishlist);
+const GameCard = ({ game, onToggleFollow, userId }) => {
+  // Utilise l'ID de l'utilisateur pour déterminer si le jeu est suivi
+  const isFollowed = game.users?.some(user => user.id === parseInt(userId) && user.pivot.is_wishlist);
 
   const handleFollowClick = () => {
     onToggleFollow(game.id, !isFollowed);
