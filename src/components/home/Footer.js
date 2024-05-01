@@ -18,10 +18,6 @@ function Footer() {
             <a href="/privacy" className="hover:text-gray-400 text-sm">Politique de confidentialité</a>
           </div>
         </div>
-        <div className="mt-4">
-          <span>Suivez-nous sur les réseaux sociaux:</span>
-          {/* Ici, tu peux ajouter des icônes de réseaux sociaux ou d'autres liens */}
-        </div>
       </div>
     </footer>
   );

@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // CommentModal.js
 function CommentModal({ show, onClose, onSubmit }) {
   const [comment, setComment] = useState('');
+  const modalRef = useRef(null);  // Ajout d'une référence pour accéder au modal
+
+  // Gestion des événements clavier et focus
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose();  // Permet de fermer le modal avec la touche Échap
+      }
+    };
+
+    // Focus automatique sur le textarea quand le modal s'ouvre
+    if (show) {
+      document.addEventListener('keydown', handleKeyDown);
+      modalRef.current?.querySelector('textarea').focus();
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [show, onClose]);
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -26,7 +46,7 @@ function CommentModal({ show, onClose, onSubmit }) {
 
   return (
     <div id="modal-overlay" className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={handleOverlayClick}>
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div ref={modalRef} className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div className="text-right">
           <button className="text-gray-600 hover:text-gray-700" onClick={onClose}>
             [X]
@@ -56,17 +76,13 @@ function CommentModal({ show, onClose, onSubmit }) {
   );
 }
 
+// Post Component
 function Post({ post }) {
   const [showCommentModal, setShowCommentModal] = useState(false);
 
-  const fakeComments = [
-    { id: 1, text: "Super photo!" },
-    { id: 2, text: "Trop mignon le chien." },
-  ];
-
   const addComment = (text) => {
     console.log('Commentaire ajouté:', text);
-    // Ici, ajoute ta logique pour envoyer le commentaire à l'API ou le stocker dans l'état
+    // Ajouter ici la logique pour envoyer le commentaire à l'API ou le stocker
   };
 
   return (
@@ -84,13 +100,8 @@ function Post({ post }) {
           <span className="inline-block mr-2">💬</span>
           Commenter
         </button>
-        <span className="text-gray-400">
-          {fakeComments.length} commentaires
-        </span>
+        <span className="text-gray-400">2 commentaires</span>
       </div>
-      {fakeComments.map(comment => (
-        <p key={comment.id} className="text-gray-500 text-sm mt-2">{comment.text}</p>
-      ))}
       <CommentModal
         show={showCommentModal}
         onClose={() => setShowCommentModal(false)}
@@ -100,6 +111,7 @@ function Post({ post }) {
   );
 }
 
+// Posts Component
 function Posts({ posts }) {
   if (!Array.isArray(posts) || !posts.length) {
     return <p className="text-gray-300 text-center mt-4">Aucun post à afficher.</p>;

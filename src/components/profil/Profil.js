@@ -15,7 +15,8 @@ function Profile() {
     cover_url: '',
     games: [],
     posts: [],
-    friends: []
+    friends: [],
+    platforms: []
   });
 
   useEffect(() => {
@@ -28,6 +29,7 @@ function Profile() {
           });
           if (response.data) {
             setProfileData(response.data);
+            console.log(response.data);
           } else {
             throw new Error('Data not found');
           }
@@ -75,6 +77,17 @@ function Profile() {
           <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
             Modifier le profil
           </button>
+        </div>
+
+        {/* Section pour afficher les plateformes */}
+        <div className="mt-8">
+          <div className="flex flex-wrap justify-center gap-4">
+            {profileData.platforms.map(platform => (
+              <div key={platform.id} className="bg-gray-200 rounded px-4 py-2 shadow">
+                {platform.name}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-4 w-full max-w-4xl mx-auto ">

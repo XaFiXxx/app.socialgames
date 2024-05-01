@@ -28,6 +28,8 @@ function Home() {
           Test Toast
         </button>
       </section>
+      <button onClick={() => toast("Test")} className="btn">Test Toast</button>
+
       
       {/* Post form */}
       <section className="container mx-auto p-4">

@@ -66,7 +66,8 @@ function Navbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 py-2 w-48 bg-green-500 rounded shadow-lg z-50">
                   <Link to="/profile" className="block px-4 py-2 hover:bg-yellow-200">Profil</Link>
-                  <Link to="/friends" className="block px-4 py-2 hover:bg-yellow-200">Liste d'amis</Link>
+                  {/* <Link to="/friends" className="block px-4 py-2 hover:bg-yellow-200">Liste d'amis</Link> */}
+                  <Link to="/plateforms" className="block px-4 py-2 hover:bg-yellow-200">Vos plateformes</Link>
                   <button onClick={handleLogout} className="block px-4 py-2 w-full text-left hover:bg-yellow-200">Déconnexion</button>
                 </div>
               )}
