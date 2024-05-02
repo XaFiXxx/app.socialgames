@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 // CommentModal.js
 function CommentModal({ show, onClose, onSubmit }) {
-  const [comment, setComment] = useState('');
-  const modalRef = useRef(null);  // Ajout d'une référence pour accéder au modal
+  const [comment, setComment] = useState("");
+  const modalRef = useRef(null); // Ajout d'une référence pour accéder au modal
 
   // Gestion des événements clavier et focus
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        onClose();  // Permet de fermer le modal avec la touche Échap
+      if (event.key === "Escape") {
+        onClose(); // Permet de fermer le modal avec la touche Échap
       }
     };
 
     // Focus automatique sur le textarea quand le modal s'ouvre
     if (show) {
-      document.addEventListener('keydown', handleKeyDown);
-      modalRef.current?.querySelector('textarea').focus();
+      document.addEventListener("keydown", handleKeyDown);
+      modalRef.current?.querySelector("textarea").focus();
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [show, onClose]);
 
@@ -30,7 +30,7 @@ function CommentModal({ show, onClose, onSubmit }) {
 
   const handleCommentSubmit = () => {
     onSubmit(comment);
-    setComment('');
+    setComment("");
     onClose();
   };
 
@@ -45,15 +45,27 @@ function CommentModal({ show, onClose, onSubmit }) {
   }
 
   return (
-    <div id="modal-overlay" className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onClick={handleOverlayClick}>
-      <div ref={modalRef} className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div
+      id="modal-overlay"
+      className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+      onClick={handleOverlayClick}
+    >
+      <div
+        ref={modalRef}
+        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
         <div className="text-right">
-          <button className="text-gray-600 hover:text-gray-700" onClick={onClose}>
+          <button
+            className="text-gray-600 hover:text-gray-700"
+            onClick={onClose}
+          >
             [X]
           </button>
         </div>
         <div className="mt-3 text-center">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Ajouter un commentaire</h3>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Ajouter un commentaire
+          </h3>
           <div className="mt-2 px-7 py-3">
             <textarea
               className="w-full p-2 border border-gray-300 rounded-lg"
@@ -81,7 +93,7 @@ function Post({ post }) {
   const [showCommentModal, setShowCommentModal] = useState(false);
 
   const addComment = (text) => {
-    console.log('Commentaire ajouté:', text);
+    console.log("Commentaire ajouté:", text);
     // Ajouter ici la logique pour envoyer le commentaire à l'API ou le stocker
   };
 
@@ -114,12 +126,13 @@ function Post({ post }) {
 // Posts Component
 function Posts({ posts }) {
   if (!Array.isArray(posts) || !posts.length) {
-    return <p className="text-gray-300 text-center mt-4">Aucun post à afficher.</p>;
+    return (
+      <p className="text-gray-300 text-center mt-4">Aucun post à afficher.</p>
+    );
   }
 
   return (
     <div className="container mx-auto mt-8 max-w-4xl">
-      <h2 className="text-xl text-gray-700 font-bold mb-4 text-center">Vos Posts</h2>
       <div className="space-y-4">
         {posts.map((post) => (
           <Post key={post.id} post={post} />

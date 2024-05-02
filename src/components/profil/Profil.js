@@ -117,7 +117,12 @@ function Profile() {
           <PostForm onPostSubmit={handleNewPost} />
         </div>
 
-        <Posts posts={profileData.posts || []} />
+        <section className="flex flex-col items-center mt-8">
+          <h2 className="text-xl text-gray-200 font-bold text-center">
+            Vos Posts
+          </h2>
+          <Posts posts={profileData.posts || []} />
+        </section>
 
         <div className="mt-8">
           <h2 className="text-xl text-gray-200 font-bold">Jeux préférés</h2>
