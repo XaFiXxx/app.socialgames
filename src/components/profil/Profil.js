@@ -1,52 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../context/AuthContext';
-import Jeux from './Jeux';
-import PostForm from '../posts/PostForm';
-import Posts from '../posts/Posts';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import Jeux from "./Jeux";
+import PostForm from "../posts/PostForm";
+import Posts from "../posts/Posts";
 
 function Profile() {
   const { user } = useAuth();
   const [profileData, setProfileData] = useState({
-    username: '',
-    biography: '',
-    avatar_url: '',
-    cover_url: '',
+    username: "",
+    biography: "",
+    avatar_url: "",
+    cover_url: "",
     games: [],
     posts: [],
     friends: [],
-    platforms: []
+    platforms: [],
   });
 
   useEffect(() => {
     const fetchData = async () => {
       if (user?.id) {
         try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get(`http://localhost:8000/api/users/${user.id}/profile`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const token = localStorage.getItem("token");
+          const response = await axios.get(
+            `http://localhost:8000/api/users/${user.id}/profile`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           if (response.data) {
             setProfileData(response.data);
             console.log(response.data);
           } else {
-            throw new Error('Data not found');
+            throw new Error("Data not found");
           }
         } catch (error) {
-          console.error('Erreur lors de la récupération des données:', error);
+          console.error("Erreur lors de la récupération des données:", error);
           toast.error("Impossible de récupérer les données de l'utilisateur.");
         }
       }
     };
-  
+
     fetchData();
   }, [user]);
 
   const handleNewPost = (newPost) => {
-    setProfileData(prevData => ({
+    setProfileData((prevData) => ({
       ...prevData,
-      posts: [newPost, ...prevData.posts]
+      posts: [newPost, ...prevData.posts],
     }));
   };
 
@@ -55,7 +58,9 @@ function Profile() {
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
-            src={`http://localhost:8000/${profileData.cover_url || "img/defaultCover.jpg"}`}
+            src={`http://localhost:8000/${
+              profileData.cover_url || "img/defaultCover.jpg"
+            }`}
             alt="Couverture"
             className="w-full h-96 object-cover rounded-lg shadow-md"
           />
@@ -67,14 +72,19 @@ function Profile() {
             />
           </div>
           <button className="absolute right-0 top-0 mt-4 mr-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+            <span class="material-symbols-outlined">photo_camera</span>
             Éditer la photo de couverture
           </button>
         </div>
 
         <div className="text-center">
-          <h1 className="text-4xl text-gray-200 font-bold mb-2">{profileData.username}</h1>
+          <h1 className="text-4xl text-gray-200 font-bold mb-2">
+            {profileData.username}
+          </h1>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+
+          <button className="bg-green-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+            <span class="material-symbols-outlined">edit</span>
             Modifier le profil
           </button>
         </div>
@@ -82,8 +92,11 @@ function Profile() {
         {/* Section pour afficher les plateformes */}
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
-            {profileData.platforms.map(platform => (
-              <div key={platform.id} className="bg-gray-200 rounded px-4 py-2 shadow">
+            {profileData.platforms.map((platform) => (
+              <div
+                key={platform.id}
+                className="bg-green-700 text-gray-200 rounded px-4 py-2 shadow"
+              >
                 {platform.name}
               </div>
             ))}
@@ -91,9 +104,8 @@ function Profile() {
         </div>
 
         <div className="mt-4 w-full max-w-4xl mx-auto ">
-        <PostForm onPostSubmit={handleNewPost} />
+          <PostForm onPostSubmit={handleNewPost} />
         </div>
-
 
         <Posts posts={profileData.posts || []} />
 

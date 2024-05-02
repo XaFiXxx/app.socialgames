@@ -22,3 +22,18 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+/* Ajoute ceci dans ton fichier CSS global */
+input[type="checkbox"].form-checkbox:checked {
+  background-color: #3b82f6; /* bleu */
+  border-color: transparent;
+}
+
+input[type="checkbox"].form-checkbox:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus shadow avec couleur bleue */
+}
+
+input[type="checkbox"].form-checkbox:disabled {
+  background-color: #6b7280; /* couleur gris pour disabled */
+}
+

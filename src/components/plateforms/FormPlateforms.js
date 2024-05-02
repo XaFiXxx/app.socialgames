@@ -73,18 +73,21 @@ function FormPlateforms({ onSave }) {
   return (
     <div className="bg-gray-800 p-4 rounded-lg">
       <h3 className="text-gray-100 text-lg font-bold mb-2">Choisissez vos plateformes de jeux :</h3>
-      {platforms.map(platform => (
-        <div key={platform.id} className="flex items-center mb-2">
-          <input
-            type="checkbox"
-            id={`platform-${platform.id}`}
-            checked={selectedPlatforms.has(platform.id)}
-            onChange={() => handlePlatformChange(platform.id)}
-            className="mr-2"
-          />
-          <label htmlFor={`platform-${platform.id}`} className="text-gray-200">{platform.name}</label>
-        </div>
-      ))}
+      <div className="flex flex-wrap">
+        {platforms.map(platform => (
+          <div key={platform.id} className="mr-2 mb-2">
+            <button
+              onClick={() => handlePlatformChange(platform.id)}
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border-2 ${
+                selectedPlatforms.has(platform.id) ? "bg-green-600 text-gray-800 border-blue-600" : "text-gray-200 border-gray-600 hover:bg-gray-700"
+              }`}
+              aria-pressed={selectedPlatforms.has(platform.id)}
+            >
+              {platform.name}
+            </button>
+          </div>
+        ))}
+      </div>
       <button
         onClick={submitPlatforms}
         className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
@@ -93,6 +96,7 @@ function FormPlateforms({ onSave }) {
       </button>
     </div>
   );
+  
 }
 
 export default FormPlateforms;
