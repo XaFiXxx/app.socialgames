@@ -70,22 +70,32 @@ function Profile() {
               alt="Profil"
               className="h-40 w-40 rounded-full object-cover"
             />
+            <button
+              className="btn btn-blue absolute right-1 bottom-2 flex items-center justify-center"
+              title="Éditer la photo de profil"
+            >
+              <span className="material-symbols-outlined">photo_camera</span>
+            </button>
           </div>
-          <button className="absolute right-0 top-0 mt-4 mr-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            <span class="material-symbols-outlined">photo_camera</span>
-            Éditer la photo de couverture
+          <button
+            className="btn btn-blue absolute right-0 bottom-0 mb-4 mr-4 flex items-center justify-center space-x-2"
+            title="Éditer la photo de couverture"
+          >
+            <span className="material-symbols-outlined">photo_camera</span>
+            <span>Éditer la photo de couverture</span>
           </button>
         </div>
 
         <div className="text-center">
-          <h1 className="text-4xl text-gray-200 font-bold mb-2">
+          <h1 className="text-4xl text-gray-200 font-bold">
             {profileData.username}
           </h1>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
-
-          <button className="bg-green-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-            <span class="material-symbols-outlined">edit</span>
-            Modifier le profil
+          <button className="btn btn-blue" title="Modifier le profil">
+            <span className="material-symbols-outlined align-middle text-lg">
+              edit
+            </span>
+            <span className="ml-2">Modifier le profil</span>
           </button>
         </div>
 
