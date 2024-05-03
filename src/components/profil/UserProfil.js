@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-// import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
 import Jeux from "./Jeux";
 
 function UserProfile() {
   const { id } = useParams();
   const [profileData, setProfileData] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false); // État pour gérer si l'utilisateur courant suit cet utilisateur
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -21,6 +21,7 @@ function UserProfile() {
           }
         );
         setProfileData(response.data);
+        setIsFollowing(response.data.isFollowing); // Supposons que `isFollowing` est renvoyé par l'API
       } catch (error) {
         console.error("Erreur lors de la récupération du profil:", error);
         toast.error("Impossible de charger les données du profil.");
@@ -29,6 +30,28 @@ function UserProfile() {
 
     fetchUserData();
   }, [id]);
+
+  const handleFollowToggle = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:8000/api/user/follow/${id}`,
+        { follow: !isFollowing },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setIsFollowing(!isFollowing); // Met à jour l'état de suivi
+      toast.success(
+        isFollowing
+          ? "Vous ne suivez plus cet utilisateur."
+          : "Vous suivez maintenant cet utilisateur."
+      );
+    } catch (error) {
+      console.error("Erreur lors du suivi/désuivi:", error);
+      toast.error("Erreur lors de la mise à jour du suivi.");
+    }
+  };
 
   if (!profileData) {
     return <div>Chargement...</div>;
@@ -59,7 +82,12 @@ function UserProfile() {
             {profileData.username}
           </h1>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
-          {/* Dynamically display profile actions if the profile belongs to the logged-in user */}
+          <button
+            onClick={handleFollowToggle}
+            className={`btn ${isFollowing ? "btn-red" : "btn-blue"}`}
+          >
+            {isFollowing ? "Unfollow" : "Follow"}
+          </button>
         </div>
 
         {/* Additional details sections */}
@@ -77,14 +105,6 @@ function UserProfile() {
         </div>
 
         <div className="mt-4 w-full max-w-4xl mx-auto ">
-          {/* <PostForm
-            onPostSubmit={(newPost) =>
-              setProfileData({
-                ...profileData,
-                posts: [newPost, ...profileData.posts],
-              })
-            }
-          /> */}
           <Posts posts={profileData.posts} />
         </div>
 
