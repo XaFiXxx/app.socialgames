@@ -3,10 +3,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PostForm from "../posts/PostForm";
-import Posts from "../posts/Posts"; // Assurez-vous que c'est le bon import et que le nom est correct
+import Posts from "../posts/Posts";
+import GameCarousel from "./GameCarousel";
 
 function Home() {
   const [posts, setPosts] = useState([]);
+  const [games, setGames] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -15,7 +17,8 @@ function Home() {
         const response = await axios.get("http://localhost:8000/api/home", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setPosts(response.data);
+        setPosts(response.data.posts);
+        setGames(response.data.games);
         console.log(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des posts:", error);
@@ -45,6 +48,11 @@ function Home() {
       <section className="flex flex-col items-center mb-8">
         <h2 className="text-3xl font-bold mt-8">Derniers posts</h2>
         <Posts posts={posts} />
+      </section>
+
+      <section className="flex flex-col items-center mb-8">
+        <h2 className="text-3xl font-bold mt-8">Jeux populaires</h2>
+        <GameCarousel games={games} />
       </section>
     </div>
   );
