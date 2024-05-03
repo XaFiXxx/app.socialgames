@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Assure-toi que les styles sont aussi importés ici
 import Home from "./components/home/Home";
@@ -10,6 +15,8 @@ import Profile from "./components/profil/Profil";
 import ProtectedRoute from "./ProtectedRoute";
 import GamesIndex from "./components/games/GamesIndex";
 import FormPlateforms from "./components/plateforms/FormPlateforms";
+import SearchResults from "./components/recherches/SearchResults";
+import UserProfil from "./components/profil/UserProfil";
 import "./App.css";
 import Footer from "./components/home/Footer";
 
@@ -19,12 +26,21 @@ function App() {
     // Tu peux ajouter ici d'autres logiques après la sauvegarde des plateformes
   };
 
+  function SearchResultsWrapper() {
+    const location = useLocation();
+    const users = location.state?.results || [];
+
+    return <SearchResults users={users} />;
+  }
+
   return (
     <div className="bg-gray-800 min-h-screen">
       <Router>
         <Routes>
           <Route path="/register" element={<Register />} />
+
           <Route path="/login" element={<Login />} />
+
           <Route
             path="/"
             element={
@@ -34,6 +50,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -43,6 +60,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/games"
             element={
@@ -52,6 +70,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/plateforms"
             element={
@@ -61,7 +80,28 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/search-results"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <SearchResultsWrapper />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile/:id/:username"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <UserProfil />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
+
         <ToastContainer
           position="bottom-right"
           autoClose={5000}

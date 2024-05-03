@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import SearchBar from "../recherches/SearchBar";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -45,11 +46,7 @@ function Navbar() {
         <div className="flex-grow">
           <div className="max-w-xs mx-auto">
             <div className="relative">
-              <input
-                type="search"
-                placeholder="Rechercher..."
-                className="px-3 py-2 rounded bg-gray-200 text-gray-700 focus:outline-none focus:bg-white focus:text-gray-900 w-full"
-              />
+              <SearchBar />
               <button className="absolute right-2 top-2 text-pink-400 focus:outline-none">
                 <span role="img" aria-label="Rechercher">
                   🔍
