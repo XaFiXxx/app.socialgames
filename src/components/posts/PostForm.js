@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function PostForm({ onPostSubmit }) {
-  const [postContent, setPostContent] = useState('');
+  const [postContent, setPostContent] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,27 +12,31 @@ function PostForm({ onPostSubmit }) {
       return;
     }
     try {
-      const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
       const user_id = user.id;
 
-      const response = await axios.post('http://localhost:8000/api/create/post', {
-        content: postContent,
-        user_id
-      }, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await axios.post(
+        "http://localhost:8000/api/create/post",
+        {
+          content: postContent,
+          user_id,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       // Si la création du post est réussie, appeler onPostSubmit avec le nouveau post
       if (response.data) {
         onPostSubmit(response.data.post);
-        setPostContent('');
-        toast.success('Post créé avec succès!');
+        setPostContent("");
+        toast.success("Post créé avec succès!");
       } else {
-        throw new Error('Failed to create post');
+        throw new Error("Failed to create post");
       }
     } catch (error) {
-      console.error('Erreur lors de la création du post:', error);
+      console.error("Erreur lors de la création du post:", error);
       toast.error("Erreur lors de la création du post.");
     }
   };
@@ -50,21 +54,28 @@ function PostForm({ onPostSubmit }) {
           ></textarea>
           <div className="flex justify-between items-center mt-3">
             <div className="flex space-x-4 items-center">
-            <button
-                  type="button"
-                  className="flex items-center justify-center p-2 rounded-full text-blue-500 hover:text-blue-600 transition bg-blue-100 hover:bg-blue-200"
-                  aria-label="Ajouter une image"
+              <button
+                type="button"
+                className="flex items-center justify-center p-2 rounded-full text-blue-500 hover:text-blue-600 transition bg-blue-100 hover:bg-blue-200"
+                aria-label="Ajouter une image"
               >
-                  <img src="/img/logoImg.webp" className="h-8 w-8" alt="Ajouter photo" />
+                <img
+                  src="/img/logoImg.webp"
+                  className="h-8 w-8"
+                  alt="game.name"
+                />
               </button>
               <button
-                  type="button"
-                  className="flex items-center justify-center p-2 rounded-full text-green-500 hover:text-green-600 transition bg-green-100 hover:bg-green-200"
-                  aria-label="Ajouter une vidéo"
+                type="button"
+                className="flex items-center justify-center p-2 rounded-full text-green-500 hover:text-green-600 transition bg-green-100 hover:bg-green-200"
+                aria-label="Ajouter une vidéo"
               >
-                  <img src="/img/logoVideo.webp" className="h-8 w-8" alt="Ajouter vidéo" />
+                <img
+                  src="/img/logoVideo.webp"
+                  className="h-8 w-8"
+                  alt="Ajouter vidéo"
+                />
               </button>
-
             </div>
             <button
               type="submit"

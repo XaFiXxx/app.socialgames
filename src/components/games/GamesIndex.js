@@ -27,7 +27,8 @@ function GamesIndex() {
           },
         }
       );
-      setGames(response.data); // Suppose que la réponse contient une liste de jeux
+      setGames(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des jeux:", error);
       toast.error("Impossible de récupérer les jeux.");
@@ -74,7 +75,9 @@ function GamesIndex() {
         pauseOnHover
         draggable
       />
-      <h2 className="text-4xl font-bold mb-6 pt-4">Jeux Populaires</h2>
+      <h2 className="text-4xl text-gray-200 font-bold mb-6 pt-4">
+        Liste des jeux
+      </h2>
       <div className="grid bg-gray-800 grid-cols-1 md:grid-cols-3 gap-6">
         {games.map((game) => (
           <GameCard

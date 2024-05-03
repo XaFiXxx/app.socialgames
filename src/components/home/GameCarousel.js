@@ -11,9 +11,9 @@ function GameCarousel({ games }) {
       spaceBetween={30}
       slidesPerView={3}
       modules={[Navigation, Pagination]}
-      navigation // active la navigation
-      pagination={{ clickable: true }} // active la pagination cliquable
-      loop={true} // active le bouclage
+      navigation
+      pagination={{ clickable: true }}
+      loop={true}
       className="mySwiper w-full max-w-4xl mx-auto"
     >
       {games.map((game, index) => (
