@@ -17,6 +17,7 @@ import GamesIndex from "./components/games/GamesIndex";
 import FormPlateforms from "./components/plateforms/FormPlateforms";
 import SearchResults from "./components/recherches/SearchResults";
 import UserProfil from "./components/profil/UserProfil";
+import ShowGame from "./components/games/ShowGame";
 import "./App.css";
 import Footer from "./components/home/Footer";
 
@@ -97,6 +98,16 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <UserProfil />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/game/:id/:name"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <ShowGame />
               </ProtectedRoute>
             }
           />

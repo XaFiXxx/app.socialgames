@@ -16,15 +16,15 @@ function SearchResults({ results }) {
         {users.length > 0 ? (
           users.map((user) => <UserResult key={user.id} user={user} />)
         ) : (
-          <p>Aucun utilisateur trouvé.</p>
+          <p class="text-gray-200">Aucun utilisateur trouvé.</p>
         )}
       </div>
-      <h3 className="text-xl text-gray-100 font-bold mb-3">Jeux</h3>
+      <h3 className="text-xl text-gray-100 mt-4 font-bold mb-3">Jeux</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {games.length > 0 ? (
           games.map((game) => <GameResult key={game.id} game={game} />)
         ) : (
-          <p>Aucun jeu trouvé.</p>
+          <p class="text-gray-200">Aucun jeu trouvé.</p>
         )}
       </div>
     </div>

@@ -70,6 +70,8 @@ function SearchBar() {
         }
       );
       navigate("/search-results", { state: { results: response.data } });
+      setSearchTerm("");
+      setSuggestions([]);
     } catch (error) {
       console.error("Erreur lors de la recherche:", error);
     }

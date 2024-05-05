@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const GameResult = ({ game }) => {
+function GameResult({ game }) {
+  console.log(game);
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out m-4">
       <img
@@ -13,12 +15,18 @@ const GameResult = ({ game }) => {
         <p className="text-gray-300 mb-2 truncate">{game.description}</p>
         <p className="text-sm text-gray-400">Developer: {game.developer}</p>
         <p className="text-sm text-gray-400">Publisher: {game.publisher}</p>
-        <div className="text-sm text-gray-400">
+        <p className="text-sm text-gray-400">
           Release Date: {game.release_date}
-        </div>
+        </p>
+        <Link
+          to={`/game/${game.id}/${game.name}`}
+          className="text-blue-500 hover:underline mt-2 block"
+        >
+          View Details
+        </Link>
       </div>
     </div>
   );
-};
+}
 
 export default GameResult;
