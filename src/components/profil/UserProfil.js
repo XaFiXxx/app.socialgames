@@ -8,20 +8,28 @@ import Jeux from "./Jeux";
 function UserProfile() {
   const { id } = useParams();
   const [profileData, setProfileData] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false); // État pour gérer si l'utilisateur courant suit cet utilisateur
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const user = JSON.parse(userString);
+
         const response = await axios.get(
           `http://localhost:8000/api/users/${id}/profile`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-User-Id": user.id, // Utiliser l'ID de l'objet utilisateur
+            },
           }
         );
         setProfileData(response.data);
-        setIsFollowing(response.data.isFollowing); // Supposons que `isFollowing` est renvoyé par l'API
+        setIsFollowing(response.data.isFollowing);
+        console.log(response.data);
+        console.log(response.data.isFollowing);
       } catch (error) {
         console.error("Erreur lors de la récupération du profil:", error);
         toast.error("Impossible de charger les données du profil.");
@@ -90,7 +98,6 @@ function UserProfile() {
           </button>
         </div>
 
-        {/* Additional details sections */}
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
             {profileData.platforms.map((platform) => (

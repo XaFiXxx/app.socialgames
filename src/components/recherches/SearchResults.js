@@ -1,16 +1,31 @@
 import React from "react";
-import UserResult from "./UserResult"; // Assure-toi d'ajuster le chemin d'importation selon ta structure de fichiers
+import UserResult from "./UserResult";
+import GameResult from "./GameResult"; // Assure-toi que le chemin est correct
 
-function SearchResults({ users }) {
+function SearchResults({ results }) {
+  const users = Array.isArray(results.users) ? results.users : [];
+  const games = Array.isArray(results.games) ? results.games : [];
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl text-gray-200 font-bold text-center mb-4">
         Résultats de recherche
       </h2>
+      <h3 className="text-xl text-gray-100 font-bold mb-3">Utilisateurs</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {users.map((user) => (
-          <UserResult key={user.id} user={user} />
-        ))}
+        {users.length > 0 ? (
+          users.map((user) => <UserResult key={user.id} user={user} />)
+        ) : (
+          <p>Aucun utilisateur trouvé.</p>
+        )}
+      </div>
+      <h3 className="text-xl text-gray-100 font-bold mb-3">Jeux</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {games.length > 0 ? (
+          games.map((game) => <GameResult key={game.id} game={game} />)
+        ) : (
+          <p>Aucun jeu trouvé.</p>
+        )}
       </div>
     </div>
   );

@@ -28,9 +28,9 @@ function App() {
 
   function SearchResultsWrapper() {
     const location = useLocation();
-    const users = location.state?.results || [];
+    const results = location.state?.results || [];
 
-    return <SearchResults users={users} />;
+    return <SearchResults results={results} />;
   }
 
   return (
