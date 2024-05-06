@@ -28,7 +28,7 @@ const ShowGame = () => {
   const toggleFollow = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:8000/api/games/${id}/follow`, // Assurez-vous que l'URL est correcte
         { follow: !isFollowing }, // Simplifiez le payload si nécessaire
         { headers: { Authorization: `Bearer ${token}` } }
@@ -49,7 +49,7 @@ const ShowGame = () => {
     .join(", ");
 
   return (
-    <div className="game-container bg-gray-900 text-white p-5 rounded-lg shadow-lg">
+    <div className="game-container bg-gray-900 min-h-screen text-white p-5 rounded-lg shadow-lg">
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/2">
           <img

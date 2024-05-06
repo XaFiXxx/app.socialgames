@@ -6,7 +6,7 @@ import Posts from "../posts/Posts";
 import Jeux from "./Jeux";
 
 function UserProfile() {
-  const { id } = useParams();
+  const { id, username } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -18,7 +18,7 @@ function UserProfile() {
         const user = JSON.parse(userString);
 
         const response = await axios.get(
-          `http://localhost:8000/api/users/${id}/profile`,
+          `http://localhost:8000/api/profil/${id}/${username}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ function UserProfile() {
     };
 
     fetchUserData();
-  }, [id]);
+  }, [id, username]);
 
   const handleFollowToggle = async () => {
     try {
