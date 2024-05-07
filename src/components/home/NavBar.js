@@ -15,7 +15,6 @@ function Navbar() {
   };
 
   const openDropdown = () => {
-    // Cancel any existing timeout to close the dropdown
     if (hoverTimeout) {
       clearTimeout(hoverTimeout);
       setHoverTimeout(null);
@@ -24,7 +23,6 @@ function Navbar() {
   };
 
   const closeDropdown = () => {
-    // Start a timeout to close the dropdown
     setHoverTimeout(
       setTimeout(() => {
         setDropdownOpen(false);
@@ -56,6 +54,15 @@ function Navbar() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <Link to="/groups" className="tooltip hover:text-blue-300 text-xl">
+            <img
+              src="/img/groupIcon.webp" // Assure-toi que le chemin vers l'icône est correct
+              alt="Icône de groupe"
+              className="w-10 h-10 rounded-full" // Appliquer rounded-full pour rendre l'image ronde
+            />
+            <span className="tooltiptext">Groupes</span>
+          </Link>
+
           <Link to="/games" className="tooltip hover:text-blue-300 text-xl">
             <img
               src="/img/videoGamesLogoT.webp"
@@ -90,7 +97,6 @@ function Navbar() {
                   >
                     Profil
                   </Link>
-                  {/* <Link to="/friends" className="block px-4 py-2 hover:bg-yellow-200">Liste d'amis</Link> */}
                   <Link
                     to="/plateforms"
                     className="block px-4 py-2 hover:bg-green-700"

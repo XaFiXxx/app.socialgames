@@ -18,6 +18,8 @@ import FormPlateforms from "./components/plateforms/FormPlateforms";
 import SearchResults from "./components/recherches/SearchResults";
 import UserProfil from "./components/profil/UserProfil";
 import ShowGame from "./components/games/ShowGame";
+import IndexGroup from "./components/group/IndexGroup";
+import ShowGroup from "./components/group/ShowGroup";
 import "./App.css";
 import Footer from "./components/home/Footer";
 
@@ -108,6 +110,26 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <ShowGame />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/groups"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <IndexGroup />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/group/:id"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <ShowGroup />
               </ProtectedRoute>
             }
           />
