@@ -1,54 +1,71 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom"; // Importe useParams si tu utilises react-router v5 ou v6
+import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import PostForm from "../posts/PostForm";
+import Posts from "../posts/Posts";
 
 const ShowGroup = () => {
-  const { id } = useParams(); // Récupère l'id depuis l'URL
+  const { id } = useParams();
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchGroup = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:8000/api/group/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setGroup(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error(
-          "Erreur lors de la récupération des détails du groupe:",
-          err
-        );
-        setError("Erreur lors de la récupération des données");
-        setLoading(false);
-      }
-    };
-
     fetchGroup();
   }, [id]);
 
-  if (loading) {
-    return <div className="text-center">Chargement...</div>;
-  }
+  const fetchGroup = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/group/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setGroup(response.data);
+    } catch (err) {
+      console.error(
+        "Erreur lors de la récupération des détails du groupe:",
+        err
+      );
+      setError("Erreur lors de la récupération des données");
+      toast.error("Erreur lors de la récupération des détails du groupe.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
-  }
+  const handleFollowGroup = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/group/${id}/follow`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(response.data.message); // Afficher le message retourné par le serveur
+      setGroup((prevGroup) => ({
+        ...prevGroup,
+        is_member: !prevGroup.is_member, // Bascule l'état d'appartenance
+      }));
+    } catch (err) {
+      console.error("Erreur lors de la tentative de suivi du groupe:", err);
+      toast.error(
+        err.response.data.message ||
+          "Erreur lors de la tentative de suivi du groupe."
+      );
+    }
+  };
 
-  if (!group) {
+  if (loading) return <div className="text-center">Chargement...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!group)
     return <div className="text-center text-red-500">Groupe non trouvé.</div>;
-  }
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer />
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg">
         <div className="bg-gray-800 mb-6 p-4 rounded-lg">
           <img
@@ -56,9 +73,14 @@ const ShowGroup = () => {
             alt={`${group.name} cover`}
             className="w-full h-64 object-cover rounded-lg"
           />
-          <h1 className="text-2xl font-bold mt-4">{group.name}</h1>
+          <h1 className="text-3xl font-bold mt-4">{group.name}</h1>
           <p className="mt-2">{group.description}</p>
           <p className="mt-2 italic">Privacy: {group.privacy}</p>
+
+          <button onClick={handleFollowGroup} className="btn btn-blue mt-4">
+            {group.is_member ? "Ne plus suivre" : "Suivre le groupe"}
+          </button>
+
           <div className="mt-4">
             <h2 className="font-bold">Jeu associé:</h2>
             {group.game ? (
@@ -79,6 +101,24 @@ const ShowGroup = () => {
             ) : (
               <p>Aucun jeu associé</p>
             )}
+          </div>
+
+          <div className="mt-4">
+            <h2 className="font-bold">Membres du groupe:</h2>
+            {group.members.map((member) => (
+              <p key={member.id}>{member.username}</p>
+            ))}
+          </div>
+
+          {/* Intégration du composant PostForm */}
+          <div className="mt-4">
+            <PostForm groupId={group.id} />
+          </div>
+
+          {/* Intégration du composant Posts */}
+          <div className="mt-4">
+            <h2 className="font-bold">Posts récents:</h2>
+            <Posts posts={group.posts} />
           </div>
         </div>
       </div>

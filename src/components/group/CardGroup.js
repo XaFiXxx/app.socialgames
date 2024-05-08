@@ -19,7 +19,7 @@ const CardGroup = ({ group }) => {
       <p>Privacy: {group.privacy}</p>
       <Link
         to={`/group/${group.id}`}
-        className="mt-2 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="btn btn-blue mt-2 block w-full text-center"
       >
         Voir Détails
       </Link>

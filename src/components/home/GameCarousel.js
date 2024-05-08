@@ -4,6 +4,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Link } from "react-router-dom";
 
 function GameCarousel({ games }) {
   return (
@@ -27,13 +28,13 @@ function GameCarousel({ games }) {
             <div className="p-4">
               <h3 className="text-lg font-bold text-white">{game.name}</h3>
               <p className="text-gray-300 truncate">{game.description}</p>
-              <div className="mt-4 flex justify-end">
-                <button
-                  className="text-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out"
-                  onClick={() => console.log("Game selected:", game.name)}
+              <div className="mt-4 flex justify-end btn">
+                <Link
+                  to={`/game/${game.id}/${game.name}`}
+                  className="text-blue-500 hover:underline mt-2 block"
                 >
-                  More Info
-                </button>
+                  View Details
+                </Link>
               </div>
             </div>
           </div>

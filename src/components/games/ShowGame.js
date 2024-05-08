@@ -28,14 +28,19 @@ const ShowGame = () => {
   const toggleFollow = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.post(
-        `http://localhost:8000/api/games/${id}/follow`, // Assurez-vous que l'URL est correcte
-        { follow: !isFollowing }, // Simplifiez le payload si nécessaire
+      const response = await axios.post(
+        `http://localhost:8000/api/games/${id}/follow`,
+        { isFollowed: isFollowing }, // Assurez-vous que le payload correspond à l'attente du backend
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setIsFollowing(!isFollowing);
+      setIsFollowing(!isFollowing); // Toggle the follow state
+      // Affichage d'un message basé sur la réponse du serveur pour confirmation
+      console.log(response.data.message);
     } catch (error) {
-      console.error("Failed to toggle follow:", error.response.data);
+      console.error(
+        "Failed to toggle follow:",
+        error.response?.data?.message || "Error"
+      );
     }
   };
 
