@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const ShowGame = () => {
   const { id, name } = useParams();
+  const userStr = localStorage.getItem("user");
+
+  // Parser la chaîne JSON pour obtenir un objet JavaScript
+  const user = userStr ? JSON.parse(userStr) : null;
+
+  // Accéder à l'ID de l'utilisateur
+  const userId = user ? user.id : null;
   const [game, setGame] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false); // Ajout d'un état pour suivre si l'utilisateur suit le jeu
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  console.log("User ID:", userId);
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -16,33 +26,56 @@ const ShowGame = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setGame(response.data);
-        setIsFollowing(response.data.is_following); // Supposons que 'is_following' est envoyé par le serveur
+        const isFollowed = response.data.users?.some(
+          (user) => user.id === parseInt(userId) && user.pivot.is_wishlist
+        );
+        setIsFollowing(isFollowed); // Correctement initialisé selon les données utilisateur
       } catch (error) {
         console.error("Failed to fetch game details:", error);
       }
     };
 
     fetchGame();
-  }, [id, name]);
+  }, [id, name, userId]);
 
-  const toggleFollow = async () => {
+  const toggleFollow = useCallback(async () => {
     const token = localStorage.getItem("token");
+    if (isLoading) return; // Empêcher les appels multiples
+
+    setIsLoading(true);
+    const newIsFollowing = !isFollowing;
+    console.log("Toggling follow, new isFollowing value:", newIsFollowing);
+
     try {
       const response = await axios.post(
         `http://localhost:8000/api/games/${id}/follow`,
-        { isFollowed: isFollowing }, // Assurez-vous que le payload correspond à l'attente du backend
+        { isFollowed: newIsFollowing },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setIsFollowing(!isFollowing); // Toggle the follow state
-      // Affichage d'un message basé sur la réponse du serveur pour confirmation
-      console.log(response.data.message);
+      console.log("Response data:", response.data);
+      // Mise à jour de l'état en fonction du message retourné par l'API
+      if (response.data.message === "Jeu suivi avec succès.") {
+        setIsFollowing(true);
+      } else if (
+        response.data.message === "Vous avez arrêté de suivre ce jeu."
+      ) {
+        setIsFollowing(false);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
     } catch (error) {
       console.error(
         "Failed to toggle follow:",
         error.response?.data?.message || "Error"
       );
+    } finally {
+      setIsLoading(false); // Réactiver le bouton après la requête
     }
-  };
+  }, [id, isFollowing, isLoading]);
+
+  useEffect(() => {
+    console.log("isFollowing has changed:", isFollowing);
+  }, [isFollowing]);
 
   if (!game) {
     return <div>Loading game details...</div>;
@@ -76,11 +109,13 @@ const ShowGame = () => {
           </div>
           <button
             onClick={toggleFollow}
+            disabled={isLoading}
             className={`mt-4 px-4 py-2 rounded ${
               isFollowing ? "bg-red-500" : "bg-green-500"
             } text-white`}
           >
-            {isFollowing ? "Unfollow" : "Follow"} Game
+            {isLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}{" "}
+            Game
           </button>
         </div>
       </div>

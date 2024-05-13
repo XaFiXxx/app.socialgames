@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const GameCard = ({ game, onToggleFollow, userId }) => {
   const isFollowed = game.users?.some(
@@ -10,7 +11,7 @@ const GameCard = ({ game, onToggleFollow, userId }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out">
+    <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out mb-4">
       <div className="relative group">
         <img
           src={`http://localhost:8000/${game.cover_image}`}
@@ -48,6 +49,14 @@ const GameCard = ({ game, onToggleFollow, userId }) => {
         <p className="text-sm text-gray-400">
           Release Date: {game.release_date}
         </p>
+      </div>
+      <div className="btn btn-blue">
+        <Link
+          to={`/game/${game.id}/${game.name}`}
+          className="text-gray-200 text-center hover:underline mt-2 block"
+        >
+          View Details
+        </Link>
       </div>
     </div>
   );
