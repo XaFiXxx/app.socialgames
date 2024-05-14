@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    location: '',
-    birthday: '', // Sera une chaîne de caractères au format 'YYYY-MM-DD'
+    username: "",
+    email: "",
+    password: "",
+    location: "",
+    birthday: "", // Sera une chaîne de caractères au format 'YYYY-MM-DD'
   });
 
   const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevFormData => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
@@ -37,19 +37,19 @@ function Register() {
       data.append(key, value);
     }
     if (file) {
-      data.append('avatar', file);
+      data.append("avatar", file);
     }
 
     try {
-      await axios.post('http://localhost:8000/api/register', data, {
+      await axios.post("http://localhost:8000/api/register", data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-      toast.success('Inscription réussie !');
-      navigate('/login');
+      toast.success("Inscription réussie !");
+      navigate("/login");
     } catch (error) {
-      toast.error('Erreur lors de l\'inscription.');
+      toast.error("Erreur lors de l'inscription.");
       console.error("Erreur lors de l'inscription:", error.response || error);
     }
   };
@@ -57,12 +57,22 @@ function Register() {
   return (
     <div className="min-h-screen bg-gray-900 flex justify-center items-center px-6">
       <div className="max-w-md w-full space-y-8">
-        <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+        />
         <div className="bg-gray-800 text-white shadow-xl rounded px-10 py-12">
-          <h2 className="text-center text-3xl font-extrabold">Créez votre compte</h2>
+          <h2 className="text-center text-3xl font-extrabold">
+            Créez votre compte
+          </h2>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div>
-              <label htmlFor="username" className="sr-only">Nom d'utilisateur</label>
+              <label htmlFor="username" className="sr-only">
+                Nom d'utilisateur
+              </label>
               <input
                 type="text"
                 id="username"
@@ -75,7 +85,9 @@ function Register() {
               />
             </div>
             <div>
-              <label htmlFor="email" className="sr-only">E-mail</label>
+              <label htmlFor="email" className="sr-only">
+                E-mail
+              </label>
               <input
                 type="email"
                 id="email"
@@ -88,7 +100,9 @@ function Register() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Mot de passe</label>
+              <label htmlFor="password" className="sr-only">
+                Mot de passe
+              </label>
               <input
                 type="password"
                 id="password"
@@ -101,19 +115,39 @@ function Register() {
               />
             </div>
             <div>
-              <label htmlFor="location" className="sr-only">Pays</label>
-              <input
-                type="text"
+              <label htmlFor="location" className="sr-only">
+                Pays
+              </label>
+              <select
                 id="location"
                 name="location"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Pays (facultatif)"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 value={formData.location}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Sélectionner un pays</option>
+                <option value="France">France</option>
+                <option value="Germany">Allemagne</option>
+                <option value="Italy">Italie</option>
+                <option value="Spain">Espagne</option>
+                <option value="United Kingdom">Royaume-Uni</option>
+                <option value="Belgium">Belgique</option>
+                <option value="Netherlands">Pays-Bas</option>
+                <option value="Sweden">Suède</option>
+                <option value="Denmark">Danemark</option>
+                <option value="Norway">Norvège</option>
+                <option value="Finland">Finlande</option>
+                <option value="Switzerland">Suisse</option>
+                <option value="Austria">Autriche</option>
+                <option value="Portugal">Portugal</option>
+                <option value="Greece">Grèce</option>
+                <option value="Ireland">Irlande</option>
+              </select>
             </div>
             <div>
-              <label htmlFor="birthday" className="sr-only">Date de naissance</label>
+              <label htmlFor="birthday" className="sr-only">
+                Date de naissance
+              </label>
               <input
                 type="date"
                 id="birthday"
@@ -126,7 +160,10 @@ function Register() {
               />
             </div>
             <div>
-              <label htmlFor="avatar" className="block text-sm font-medium text-gray-200">
+              <label
+                htmlFor="avatar"
+                className="block text-sm font-medium text-gray-200"
+              >
                 Avatar (facultatif)
               </label>
               <input

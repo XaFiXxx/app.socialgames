@@ -28,10 +28,10 @@ function GameCarousel({ games }) {
             <div className="p-4">
               <h3 className="text-lg font-bold text-white">{game.name}</h3>
               <p className="text-gray-300 truncate">{game.description}</p>
-              <div className="mt-4 flex justify-end btn">
+              <div className="mt-4 text-center btn btn-blue">
                 <Link
                   to={`/game/${game.id}/${game.name}`}
-                  className="text-blue-500 hover:underline mt-2 block"
+                  className="text-gray-200 hover:underline mt-2 block"
                 >
                   View Details
                 </Link>

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CardGroup from "./CardGroup"; // Assurez-vous que le chemin d'importation est correct
+import CreateGroup from "./CreateGroup"; // Importez le nouveau composant
 
 const IndexGroup = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newGroupName, setNewGroupName] = useState("");
+  const [games, setGames] = useState([]);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -18,31 +19,54 @@ const IndexGroup = () => {
           },
         });
         setGroups(response.data);
-        setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des groupes:", error);
+      } finally {
         setLoading(false);
       }
     };
 
+    const fetchGames = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:8000/api/games/index",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setGames(response.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des jeux:", error);
+      }
+    };
+
     fetchGroups();
+    fetchGames();
   }, []);
 
-  const handleCreateGroup = async () => {
+  const handleCreateGroup = async (groupData) => {
     try {
       const token = localStorage.getItem("token");
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(groupData)) {
+        formData.append(key, value);
+      }
+
       const response = await axios.post(
-        "http://localhost:8000/api/groups",
-        { name: newGroupName },
+        "http://localhost:8000/api/group/create",
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
       setGroups([...groups, response.data]);
       setIsModalOpen(false);
-      setNewGroupName("");
     } catch (error) {
       console.error("Erreur lors de la création du groupe:", error);
     }
@@ -74,32 +98,11 @@ const IndexGroup = () => {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Créer un nouveau groupe</h2>
-            <input
-              type="text"
-              className="border p-2 mb-4 w-full"
-              placeholder="Nom du groupe"
-              value={newGroupName}
-              onChange={(e) => setNewGroupName(e.target.value)}
-            />
-            <div className="flex justify-end">
-              <button
-                className="px-4 py-2 bg-gray-500 text-white rounded mr-2"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Annuler
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={handleCreateGroup}
-              >
-                Créer
-              </button>
-            </div>
-          </div>
-        </div>
+        <CreateGroup
+          games={games}
+          onCreateGroup={handleCreateGroup}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
     </div>
   );
