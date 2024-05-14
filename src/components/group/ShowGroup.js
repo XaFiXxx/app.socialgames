@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,11 +12,7 @@ const ShowGroup = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchGroup();
-  }, [id]);
-
-  const fetchGroup = async () => {
+  const fetchGroup = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
@@ -34,7 +30,11 @@ const ShowGroup = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchGroup();
+  }, [fetchGroup]);
 
   const handleFollowGroup = async () => {
     const token = localStorage.getItem("token");
@@ -70,7 +70,7 @@ const ShowGroup = () => {
         <div className="bg-gray-800 mb-6 p-4 rounded-lg">
           <img
             src={`http://localhost:8000/${group.group_image}`}
-            alt={`${group.name} cover`}
+            alt={group.name}
             className="w-full h-64 object-cover rounded-lg"
           />
           <h1 className="text-3xl font-bold mt-4">{group.name}</h1>

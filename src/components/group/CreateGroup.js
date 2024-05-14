@@ -73,7 +73,7 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
           {newGroupImagePreview && (
             <img
               src={newGroupImagePreview}
-              alt="Aperçu de l'image"
+              alt="Aperçu"
               className="w-full h-32 object-cover rounded mb-4"
             />
           )}
