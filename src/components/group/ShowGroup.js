@@ -77,7 +77,10 @@ const ShowGroup = () => {
           <p className="mt-2">{group.description}</p>
           <p className="mt-2 italic">Privacy: {group.privacy}</p>
 
-          <button onClick={handleFollowGroup} className="btn btn-blue mt-4">
+          <button
+            onClick={handleFollowGroup}
+            className={`btn ${group.is_member ? "btn-red" : "btn-blue"} mt-4`}
+          >
             {group.is_member ? "Ne plus suivre" : "Suivre le groupe"}
           </button>
 

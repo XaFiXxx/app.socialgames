@@ -110,9 +110,9 @@ const ShowGame = () => {
           <button
             onClick={toggleFollow}
             disabled={isLoading}
-            className={`mt-4 px-4 py-2 rounded ${
-              isFollowing ? "bg-red-500" : "bg-green-500"
-            } text-white`}
+            className={`mt-4 px-4 py-2 btn ${
+              isFollowing ? "btn-red" : "btn-blue"
+            }`}
           >
             {isLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}{" "}
             Game
