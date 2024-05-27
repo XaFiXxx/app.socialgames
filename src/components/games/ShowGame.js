@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import Rating from "./Rating"; // Assurez-vous que le chemin d'importation est correct
 
 const ShowGame = () => {
   const { id, name } = useParams();
@@ -87,36 +88,48 @@ const ShowGame = () => {
     .join(", ");
 
   return (
-    <div className="game-container bg-gray-900 min-h-screen text-white p-5 rounded-lg shadow-lg">
-      <div className="flex flex-col md:flex-row">
+    <div className="bg-gray-900 min-h-screen text-white p-8 rounded-lg shadow-lg">
+      <div className="flex flex-col md:flex-row items-center md:items-start">
         <div className="md:w-1/2">
           <img
             src={`http://localhost:8000/${game.cover_image}`}
             alt={game.name}
-            className="object-cover rounded-lg shadow-md"
+            className="w-full h-auto object-cover rounded-lg shadow-md"
           />
         </div>
-        <div className="md:w-1/2 md:pl-10 mt-4 md:mt-0">
-          <h1 className="text-3xl font-bold">{game.name}</h1>
-          <p className="mt-2">{game.description}</p>
-          <div className="mt-4">
-            <h2 className="text-xl font-semibold">Details</h2>
-            <p>Developer: {game.developer}</p>
-            <p>Publisher: {game.publisher}</p>
-            <p>Release Date: {game.release_date}</p>
-            <p>Genres: {genreNames}</p>
-            <p>Platforms: {platformNames}</p>
+        <div className="md:w-1/2 md:pl-10 mt-6 md:mt-0">
+          <h1 className="text-4xl font-bold">{game.name}</h1>
+          <p className="mt-4 text-gray-300">{game.description}</p>
+          <div className="mt-6">
+            <h2 className="text-2xl font-semibold">Details</h2>
+            <p className="mt-2">Developer: {game.developer}</p>
+            <p className="mt-1">Publisher: {game.publisher}</p>
+            <p className="mt-1">Release Date: {game.release_date}</p>
+            <p className="mt-1">Genres: {genreNames}</p>
+            <p className="mt-1">Platforms: {platformNames}</p>
           </div>
           <button
             onClick={toggleFollow}
             disabled={isLoading}
-            className={`mt-4 px-4 py-2 btn ${
-              isFollowing ? "btn-red" : "btn-blue"
+            className={`mt-6 px-6 py-2 text-lg font-medium rounded-lg ${
+              isFollowing
+                ? "bg-red-600 hover:bg-red-700"
+                : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {isLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}{" "}
             Game
           </button>
+          <div className="mt-6">
+            <h2 className="text-2xl font-semibold">Rate this Game</h2>
+            <Rating
+              gameId={id}
+              userId={userId} // Passer l'ID utilisateur au composant Rating
+              initialRating={0} // Initial rating can be adjusted if needed
+              initialReview=""
+              token={localStorage.getItem("token")}
+            />
+          </div>
         </div>
       </div>
     </div>
