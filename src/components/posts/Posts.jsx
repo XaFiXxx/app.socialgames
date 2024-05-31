@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaThumbsUp, FaComment } from "react-icons/fa";
-import { CommentModal, CommentList } from "./comments";
+import { CommentInput, CommentList } from "./comments";
 
 // Post Component
 function Post({ post }) {
-  const [showCommentModal, setShowCommentModal] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked || false);
   const [likes, setLikes] = useState(post.likes_count || 0);
   const [comments, setComments] = useState(post.comments || []);
+  const [showMoreComments, setShowMoreComments] = useState(false);
 
   const addComment = async (text) => {
     try {
@@ -46,6 +46,10 @@ function Post({ post }) {
     }
   };
 
+  const handleShowMoreComments = () => {
+    setShowMoreComments(true);
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <p className="text-gray-600">{post.content}</p>
@@ -59,19 +63,22 @@ function Post({ post }) {
           <FaThumbsUp className="mr-2" />
           <span>{likes}</span>
         </button>
-        <button
-          onClick={() => setShowCommentModal(true)}
-          className="flex items-center text-green-500 hover:text-green-600 transition-colors duration-300"
-        >
+        <button className="flex items-center text-green-500 hover:text-green-600 transition-colors duration-300">
           <FaComment className="mr-2" />
         </button>
       </div>
-      <CommentList comments={comments} />
-      <CommentModal
-        show={showCommentModal}
-        onClose={() => setShowCommentModal(false)}
-        onSubmit={addComment}
+      <CommentInput onSubmit={addComment} />
+      <CommentList
+        comments={comments.slice(0, showMoreComments ? comments.length : 3)}
       />
+      {comments.length > 3 && !showMoreComments && (
+        <button
+          className="text-blue-500 hover:text-blue-700 mt-2"
+          onClick={handleShowMoreComments}
+        >
+          Voir plus de commentaires
+        </button>
+      )}
     </div>
   );
 }
