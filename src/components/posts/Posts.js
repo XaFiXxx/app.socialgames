@@ -1,119 +1,72 @@
-import React, { useState, useEffect, useRef } from "react";
-
-// CommentModal.js
-function CommentModal({ show, onClose, onSubmit }) {
-  const [comment, setComment] = useState("");
-  const modalRef = useRef(null); // Ajout d'une référence pour accéder au modal
-
-  // Gestion des événements clavier et focus
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        onClose(); // Permet de fermer le modal avec la touche Échap
-      }
-    };
-
-    // Focus automatique sur le textarea quand le modal s'ouvre
-    if (show) {
-      document.addEventListener("keydown", handleKeyDown);
-      modalRef.current?.querySelector("textarea").focus();
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [show, onClose]);
-
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
-  };
-
-  const handleCommentSubmit = () => {
-    onSubmit(comment);
-    setComment("");
-    onClose();
-  };
-
-  const handleOverlayClick = (e) => {
-    if (e.target.id === "modal-overlay") {
-      onClose();
-    }
-  };
-
-  if (!show) {
-    return null;
-  }
-
-  return (
-    <div
-      id="modal-overlay"
-      className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
-      onClick={handleOverlayClick}
-    >
-      <div
-        ref={modalRef}
-        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-      >
-        <div className="text-right">
-          <button
-            className="text-gray-600 hover:text-gray-700"
-            onClick={onClose}
-          >
-            [X]
-          </button>
-        </div>
-        <div className="mt-3 text-center">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Ajouter un commentaire
-          </h3>
-          <div className="mt-2 px-7 py-3">
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              placeholder="Votre commentaire..."
-              value={comment}
-              onChange={handleCommentChange}
-            ></textarea>
-          </div>
-          <div className="items-center px-4 py-3">
-            <button
-              className="px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
-              onClick={handleCommentSubmit}
-            >
-              Poster
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import React, { useState } from "react";
+import axios from "axios";
+import { FaThumbsUp, FaComment } from "react-icons/fa";
+import { CommentModal, CommentList } from "./comments";
 
 // Post Component
 function Post({ post }) {
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.is_liked || false);
+  const [likes, setLikes] = useState(post.likes_count || 0);
+  const [comments, setComments] = useState(post.comments || []);
 
-  const addComment = (text) => {
-    console.log("Commentaire ajouté:", text);
-    // Ajouter ici la logique pour envoyer le commentaire à l'API ou le stocker
+  const addComment = async (text) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/post/${post.id}/comment`,
+        { content: text },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setComments([...comments, response.data.comment]);
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/post/${post.id}/like`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      if (response.data.message === "Post liked") {
+        setIsLiked(true);
+        setLikes(likes + 1);
+      } else {
+        setIsLiked(false);
+        setLikes(likes - 1);
+      }
+    } catch (error) {
+      console.error("Failed to like post:", error);
+    }
   };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <p className="text-gray-600">{post.content}</p>
       <div className="flex justify-between items-center mt-4">
-        <button className="flex items-center text-blue-500 hover:text-blue-600">
-          <span className="inline-block mr-2">👍</span>
-          Like
+        <button
+          onClick={handleLike}
+          className={`flex items-center ${
+            isLiked ? "text-blue-500" : "text-gray-500"
+          } hover:text-blue-600 transition-colors duration-300`}
+        >
+          <FaThumbsUp className="mr-2" />
+          <span>{likes}</span>
         </button>
         <button
           onClick={() => setShowCommentModal(true)}
-          className="flex items-center text-green-500 hover:text-green-600"
+          className="flex items-center text-green-500 hover:text-green-600 transition-colors duration-300"
         >
-          <span className="inline-block mr-2">💬</span>
-          Commenter
+          <FaComment className="mr-2" />
         </button>
-        <span className="text-gray-400">2 commentaires</span>
       </div>
+      <CommentList comments={comments} />
       <CommentModal
         show={showCommentModal}
         onClose={() => setShowCommentModal(false)}
