@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import axios from "axios";
 
-const Rating = ({ gameId, userId, initialRating, initialReview, token }) => {
+const Rating = ({
+  gameId,
+  userId,
+  initialRating,
+  initialReview,
+  token,
+  fetchGame,
+}) => {
   const [rating, setRating] = useState(initialRating);
   const [review, setReview] = useState(initialReview);
   const [hover, setHover] = useState(null);
@@ -15,6 +22,7 @@ const Rating = ({ gameId, userId, initialRating, initialReview, token }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log("Rating response:", response.data);
+      fetchGame(); // Fetch the game data again to update the reviews
     } catch (error) {
       console.error("Failed to submit rating and review:", error);
     }

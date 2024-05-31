@@ -126,6 +126,7 @@ const ShowGame = () => {
               initialRating={0}
               initialReview=""
               token={localStorage.getItem("token")}
+              fetchGame={fetchGame} // Pass fetchGame to Rating
             />
           </div>
           <div className="mt-6">

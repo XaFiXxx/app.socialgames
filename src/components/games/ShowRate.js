@@ -1,5 +1,8 @@
 import React from "react";
 import axios from "axios";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { FaUser } from "react-icons/fa"; // Import an icon for user indication
 
 const ShowRate = ({ reviews, userId, token, fetchGame }) => {
   const formatDate = (date) => {
@@ -8,22 +11,42 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
   };
 
   const handleEdit = (review) => {
-    // Implémentez ici la logique pour éditer l'évaluation
-    // Cela pourrait impliquer de naviguer vers un formulaire de modification avec les données de l'évaluation
     console.log("Edit review:", review);
   };
 
-  const handleDelete = async (reviewId) => {
-    try {
-      await axios.delete(`http://localhost:8000/api/reviews/${reviewId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // Appel à fetchGame pour rafraîchir les données du jeu après suppression de l'évaluation
-      fetchGame();
-    } catch (error) {
-      console.error("Failed to delete review:", error);
-    }
+  const handleDelete = async (gameId, reviewId) => {
+    confirmAlert({
+      title: "Confirmer la suppression",
+      message: "Êtes-vous sûr de vouloir supprimer cet avis ?",
+      buttons: [
+        {
+          label: "Oui",
+          onClick: async () => {
+            try {
+              await axios.post(
+                `http://localhost:8000/api/games/${gameId}/rate/delete`,
+                { review_id: reviewId },
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              fetchGame(); // Fetch the game data again to update the reviews
+            } catch (error) {
+              console.error("Failed to delete review:", error);
+            }
+          },
+        },
+        {
+          label: "Non",
+          onClick: () => {},
+        },
+      ],
+    });
   };
+
+  // Séparer l'avis de l'utilisateur connecté des autres avis
+  const userReview = reviews.find((review) => review.user_id === userId);
+  const otherReviews = reviews.filter((review) => review.user_id !== userId);
 
   return (
     <div className="reviews-container flex flex-col mt-2">
@@ -31,42 +54,64 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
       {reviews.length === 0 ? (
         <p>Pas d'avis pour ce jeu.</p>
       ) : (
-        reviews.map((review) => (
-          <div
-            key={review.id}
-            className="review-item p-4 border-b border-gray-700"
-          >
-            <p>
-              <strong>User :</strong>{" "}
-              {review.user ? review.user.username : "Anonymous"}
-            </p>
-            <p>
-              <strong>Date :</strong> {formatDate(review.created_at)}
-            </p>
-            <p>
-              <strong>Note :</strong> {review.rating} / 5
-            </p>
-            <p>
-              <strong>Commentaire :</strong> {review.review}
-            </p>
-            {review.user_id === userId && ( // Vérifiez si l'utilisateur connecté est celui qui a laissé l'évaluation
+        <>
+          {userReview && (
+            <div
+              key={userReview.id}
+              className="review-item p-4 border-b border-gray-700 bg-gray-800 rounded-lg shadow-md"
+            >
+              <div className="flex items-center mb-2">
+                <FaUser className="text-blue-500 mr-2" />
+                <p className="text-lg font-semibold">Votre avis</p>
+              </div>
+              <p>
+                <strong>Date :</strong> {formatDate(userReview.created_at)}
+              </p>
+              <p>
+                <strong>Note :</strong> {userReview.rating} / 5
+              </p>
+              <p>
+                <strong>Commentaire :</strong> {userReview.review}
+              </p>
               <div className="mt-2">
                 <button
-                  onClick={() => handleEdit(review)}
+                  onClick={() => handleEdit(userReview)}
                   className="mr-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(review.id)}
+                  onClick={() =>
+                    handleDelete(userReview.game_id, userReview.id)
+                  }
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
                 >
                   Delete
                 </button>
               </div>
-            )}
-          </div>
-        ))
+            </div>
+          )}
+          {otherReviews.map((review) => (
+            <div
+              key={review.id}
+              className="review-item p-4 border-b border-gray-700 rounded-lg"
+            >
+              <p>
+                <strong>User :</strong>{" "}
+                {review.user ? review.user.username : "Anonymous"}
+              </p>
+              <p>
+                <strong>Date :</strong> {formatDate(review.created_at)}
+              </p>
+              <p>
+                <strong>Note :</strong> {review.rating} / 5
+              </p>
+              <p>
+                <strong>Commentaire :</strong> {review.review}
+              </p>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );
