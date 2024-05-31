@@ -1,17 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { FaUser } from "react-icons/fa"; // Import an icon for user indication
+import { FaUser, FaStar } from "react-icons/fa"; // Import an icon for user indication
 
 const ShowRate = ({ reviews, userId, token, fetchGame }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editRating, setEditRating] = useState(0);
+  const [editReview, setEditReview] = useState("");
+  const [hover, setHover] = useState(null);
+  const [editReviewId, setEditReviewId] = useState(null);
+
   const formatDate = (date) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
   const handleEdit = (review) => {
-    console.log("Edit review:", review);
+    setIsEditing(true);
+    setEditRating(review.rating);
+    setEditReview(review.review);
+    setEditReviewId(review.id);
+  };
+
+  const handleUpdate = async (gameId) => {
+    try {
+      await axios.post(
+        `http://localhost:8000/api/games/${gameId}/rate/update`,
+        {
+          review_id: editReviewId,
+          rating: editRating,
+          review: editReview,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setIsEditing(false);
+      fetchGame(); // Fetch the game data again to update the reviews
+    } catch (error) {
+      console.error("Failed to update review:", error);
+    }
   };
 
   const handleDelete = async (gameId, reviewId) => {
@@ -64,31 +93,82 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
                 <FaUser className="text-blue-500 mr-2" />
                 <p className="text-lg font-semibold">Votre avis</p>
               </div>
-              <p>
-                <strong>Date :</strong> {formatDate(userReview.created_at)}
-              </p>
-              <p>
-                <strong>Note :</strong> {userReview.rating} / 5
-              </p>
-              <p>
-                <strong>Commentaire :</strong> {userReview.review}
-              </p>
-              <div className="mt-2">
-                <button
-                  onClick={() => handleEdit(userReview)}
-                  className="mr-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() =>
-                    handleDelete(userReview.game_id, userReview.id)
-                  }
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
-                >
-                  Delete
-                </button>
-              </div>
+              {isEditing ? (
+                <div className="flex flex-col">
+                  <div className="flex items-center mb-2">
+                    {[...Array(5)].map((star, index) => {
+                      const ratingValue = index + 1;
+                      return (
+                        <label key={index}>
+                          <input
+                            type="radio"
+                            name="rating"
+                            value={ratingValue}
+                            onClick={() => setEditRating(ratingValue)}
+                            className="hidden"
+                          />
+                          <FaStar
+                            className={`cursor-pointer text-2xl ${
+                              ratingValue <= (hover || editRating)
+                                ? "text-yellow-500"
+                                : "text-gray-400"
+                            }`}
+                            onMouseEnter={() => setHover(ratingValue)}
+                            onMouseLeave={() => setHover(null)}
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <textarea
+                    className="mt-4 p-2 w-full bg-gray-800 text-white rounded"
+                    value={editReview}
+                    onChange={(e) => setEditReview(e.target.value)}
+                  ></textarea>
+                  <div className="mt-2">
+                    <button
+                      onClick={() => handleUpdate(userReview.game_id)}
+                      className="mr-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p>
+                    <strong>Date :</strong> {formatDate(userReview.created_at)}
+                  </p>
+                  <p>
+                    <strong>Note :</strong> {userReview.rating} / 5
+                  </p>
+                  <p>
+                    <strong>Commentaire :</strong> {userReview.review}
+                  </p>
+                  <div className="mt-2">
+                    <button
+                      onClick={() => handleEdit(userReview)}
+                      className="mr-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDelete(userReview.game_id, userReview.id)
+                      }
+                      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
           {otherReviews.map((review) => (
