@@ -87,19 +87,37 @@ function Post({ post }) {
 
 // Posts Component
 function Posts({ posts }) {
+  const [visiblePosts, setVisiblePosts] = useState(3);
+
+  const handleShowMorePosts = () => {
+    setVisiblePosts((prevVisiblePosts) => prevVisiblePosts + 3);
+  };
+
   if (!Array.isArray(posts) || !posts.length) {
     return (
       <p className="text-gray-300 text-center mt-4">Aucun post à afficher.</p>
     );
   }
 
+  const displayedPosts = posts.slice(0, visiblePosts);
+
   return (
     <div className="container mx-auto mt-8 max-w-4xl">
       <div className="space-y-4">
-        {posts.map((post) => (
+        {displayedPosts.map((post) => (
           <Post key={post.id} post={post} />
         ))}
       </div>
+      {visiblePosts < posts.length && (
+        <div className="flex justify-center mt-4">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors duration-300"
+            onClick={handleShowMorePosts}
+          >
+            Voir plus de posts
+          </button>
+        </div>
+      )}
     </div>
   );
 }
