@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Rating from "./Rating"; // Assurez-vous que le chemin d'importation est correct
+import Rating from "./Rating";
+import ShowRate from "./ShowRate";
 
 const ShowGame = () => {
   const { id, name } = useParams();
   const userStr = localStorage.getItem("user");
 
-  // Parser la chaîne JSON pour obtenir un objet JavaScript
   const user = userStr ? JSON.parse(userStr) : null;
-
-  // Accéder à l'ID de l'utilisateur
   const userId = user ? user.id : null;
   const [game, setGame] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -18,30 +16,31 @@ const ShowGame = () => {
 
   console.log("User ID:", userId);
 
-  useEffect(() => {
-    const fetchGame = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/game/${id}/${name}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setGame(response.data);
-        const isFollowed = response.data.users?.some(
-          (user) => user.id === parseInt(userId) && user.pivot.is_wishlist
-        );
-        setIsFollowing(isFollowed); // Correctement initialisé selon les données utilisateur
-      } catch (error) {
-        console.error("Failed to fetch game details:", error);
-      }
-    };
-
-    fetchGame();
+  const fetchGame = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/game/${id}/${name}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setGame(response.data);
+      console.log("Game details:", response.data);
+      const isFollowed = response.data.users?.some(
+        (user) => user.id === parseInt(userId) && user.pivot.is_wishlist
+      );
+      setIsFollowing(isFollowed);
+    } catch (error) {
+      console.error("Failed to fetch game details:", error);
+    }
   }, [id, name, userId]);
+
+  useEffect(() => {
+    fetchGame();
+  }, [fetchGame]);
 
   const toggleFollow = useCallback(async () => {
     const token = localStorage.getItem("token");
-    if (isLoading) return; // Empêcher les appels multiples
+    if (isLoading) return;
 
     setIsLoading(true);
     const newIsFollowing = !isFollowing;
@@ -54,7 +53,6 @@ const ShowGame = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log("Response data:", response.data);
-      // Mise à jour de l'état en fonction du message retourné par l'API
       if (response.data.message === "Jeu suivi avec succès.") {
         setIsFollowing(true);
       } else if (
@@ -70,7 +68,7 @@ const ShowGame = () => {
         error.response?.data?.message || "Error"
       );
     } finally {
-      setIsLoading(false); // Réactiver le bouton après la requête
+      setIsLoading(false);
     }
   }, [id, isFollowing, isLoading]);
 
@@ -124,10 +122,18 @@ const ShowGame = () => {
             <h2 className="text-2xl font-semibold">Rate this Game</h2>
             <Rating
               gameId={id}
-              userId={userId} // Passer l'ID utilisateur au composant Rating
-              initialRating={0} // Initial rating can be adjusted if needed
+              userId={userId}
+              initialRating={0}
               initialReview=""
               token={localStorage.getItem("token")}
+            />
+          </div>
+          <div className="mt-6">
+            <ShowRate
+              reviews={game.reviews}
+              userId={userId}
+              token={localStorage.getItem("token")}
+              fetchGame={fetchGame}
             />
           </div>
         </div>
