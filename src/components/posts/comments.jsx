@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 
 export function CommentInput({ onSubmit }) {
   const [comment, setComment] = useState("");
@@ -15,15 +15,15 @@ export function CommentInput({ onSubmit }) {
   };
 
   return (
-    <div className="flex mt-4">
+    <div className="flex flex-col mt-4">
       <textarea
-        className="w-full p-2 border border-gray-300 rounded-lg"
+        className="w-full p-2 border border-gray-300 text-gray-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-300"
         placeholder="Ajouter un commentaire..."
         value={comment}
         onChange={handleCommentChange}
       ></textarea>
       <button
-        className="ml-2 px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+        className="mt-2 px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
         onClick={handleCommentSubmit}
       >
         Poster
@@ -34,7 +34,7 @@ export function CommentInput({ onSubmit }) {
 
 export function CommentList({ comments }) {
   return (
-    <div className="mt-4">
+    <div className="mt-4 space-y-4">
       {comments.map((comment) => (
         <div key={comment.id} className="border-t border-gray-300 pt-2">
           <p className="text-gray-600">

@@ -19,7 +19,7 @@ function Post({ post }) {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
-      setComments([...comments, response.data.comment]);
+      setComments([response.data.comment, ...comments]); // Ajouter le nouveau commentaire en haut
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
@@ -50,6 +50,9 @@ function Post({ post }) {
     setShowMoreComments(true);
   };
 
+  // Inverser les commentaires avant de les passer à CommentList
+  const displayedComments = comments.slice().reverse().slice(0, showMoreComments ? comments.length : 3);
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <p className="text-gray-600">{post.content}</p>
@@ -65,12 +68,11 @@ function Post({ post }) {
         </button>
         <button className="flex items-center text-green-500 hover:text-green-600 transition-colors duration-300">
           <FaComment className="mr-2" />
+          <span>{comments.length}</span>
         </button>
       </div>
       <CommentInput onSubmit={addComment} />
-      <CommentList
-        comments={comments.slice(0, showMoreComments ? comments.length : 3)}
-      />
+      <CommentList comments={displayedComments} />
       {comments.length > 3 && !showMoreComments && (
         <button
           className="text-blue-500 hover:text-blue-700 mt-2"
