@@ -5,9 +5,21 @@ import { toast } from "react-toastify";
 function PostForm({ onPostSubmit, groupId = null }) {
   const [postContent, setPostContent] = useState("");
   const [image, setImage] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl("");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,6 +59,7 @@ function PostForm({ onPostSubmit, groupId = null }) {
         onPostSubmit(response.data.post);
         setPostContent("");
         setImage(null);
+        setImagePreviewUrl(""); // Réinitialiser la prévisualisation de l'image
         toast.success("Post créé avec succès!");
       } else {
         throw new Error("Failed to create post");
@@ -68,6 +81,15 @@ function PostForm({ onPostSubmit, groupId = null }) {
             rows="4"
             className="resize-none w-full p-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          {imagePreviewUrl && (
+            <div className="mt-4">
+              <img
+                src={imagePreviewUrl}
+                alt="Prévisualisation"
+                className="w-full h-auto rounded-lg shadow-md"
+              />
+            </div>
+          )}
           <div className="flex justify-between items-center mt-3">
             <div className="flex space-x-4 items-center">
               <label
