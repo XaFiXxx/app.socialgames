@@ -58,6 +58,13 @@ const ShowGroup = () => {
     }
   };
 
+  const handlePostSubmit = (newPost) => {
+    setGroup((prevGroup) => ({
+      ...prevGroup,
+      posts: [newPost, ...prevGroup.posts], // Ajouter le nouveau post en haut de la liste
+    }));
+  };
+
   if (loading) return <div className="text-center">Chargement...</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;
   if (!group)
@@ -115,7 +122,7 @@ const ShowGroup = () => {
 
           {/* Intégration du composant PostForm */}
           <div className="mt-4">
-            <PostForm groupId={group.id} />
+            <PostForm groupId={group.id} onPostSubmit={handlePostSubmit} />
           </div>
 
           {/* Intégration du composant Posts */}

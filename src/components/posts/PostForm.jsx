@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-function PostForm({ onPostSubmit }) {
+function PostForm({ onPostSubmit, groupId = null }) {
   const [postContent, setPostContent] = useState("");
 
   const handleSubmit = async (e) => {
@@ -16,19 +16,26 @@ function PostForm({ onPostSubmit }) {
       const user = JSON.parse(localStorage.getItem("user"));
       const user_id = user.id;
 
+      const payload = {
+        content: postContent,
+        user_id,
+      };
+
+      // Ajouter group_id au payload s'il est fourni
+      if (groupId) {
+        payload.group_id = groupId;
+      }
+
       const response = await axios.post(
         "http://localhost:8000/api/create/post",
-        {
-          content: postContent,
-          user_id,
-        },
+        payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       // Si la création du post est réussie, appeler onPostSubmit avec le nouveau post
-      if (response.data) {
+      if (response.data.post) {
         onPostSubmit(response.data.post);
         setPostContent("");
         toast.success("Post créé avec succès!");
@@ -62,7 +69,7 @@ function PostForm({ onPostSubmit }) {
                 <img
                   src="/img/logoImg.webp"
                   className="h-8 w-8"
-                  alt="game.name"
+                  alt="Ajouter une image"
                 />
               </button>
               <button
@@ -73,7 +80,7 @@ function PostForm({ onPostSubmit }) {
                 <img
                   src="/img/logoVideo.webp"
                   className="h-8 w-8"
-                  alt="Ajouter vidéo"
+                  alt="Ajouter une vidéo"
                 />
               </button>
             </div>
