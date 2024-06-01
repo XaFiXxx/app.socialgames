@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +30,7 @@ function SearchBar() {
           },
         }
       );
-      // Assumons que response.data contient deux listes: users et games
+      // Assumons que response.data contient trois listes: users, games et groups
       const combinedSuggestions = [
         ...response.data.users.map((user) => ({
           ...user,
@@ -39,6 +41,11 @@ function SearchBar() {
           ...game,
           label: game.name,
           type: "Game",
+        })),
+        ...response.data.groups.map((group) => ({
+          ...group,
+          label: group.name,
+          type: "Group",
         })),
       ];
       setSuggestions(combinedSuggestions);
@@ -62,6 +69,11 @@ function SearchBar() {
   // Fonction pour gérer la soumission du formulaire
   const handleSearch = async (event) => {
     event.preventDefault();
+    if (!searchTerm.trim()) {
+      // Afficher un message d'erreur ou empêcher la recherche si le terme de recherche est vide
+      toast.error("Veuillez entrer un terme de recherche.");
+      return;
+    }
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -107,6 +119,7 @@ function SearchBar() {
 
   return (
     <form onSubmit={handleSearch} className="relative">
+      <ToastContainer />
       <input
         type="text"
         value={searchTerm}

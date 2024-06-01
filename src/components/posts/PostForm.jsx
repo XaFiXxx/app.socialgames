@@ -99,7 +99,7 @@ function PostForm({ onPostSubmit, groupId = null }) {
                 <img
                   src="/img/logoImg.webp"
                   className="h-8 w-8"
-                  alt="Ajouter une image"
+                  alt="Ajouter"
                 />
                 <input
                   type="file"
