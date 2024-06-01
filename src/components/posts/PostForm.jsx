@@ -4,6 +4,11 @@ import { toast } from "react-toastify";
 
 function PostForm({ onPostSubmit, groupId = null }) {
   const [postContent, setPostContent] = useState("");
+  const [image, setImage] = useState(null);
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -11,33 +16,37 @@ function PostForm({ onPostSubmit, groupId = null }) {
       toast.error("Le contenu du post ne peut pas être vide.");
       return;
     }
+
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const user_id = user.id;
+
+    const formData = new FormData();
+    formData.append("content", postContent);
+    formData.append("user_id", user_id);
+    if (groupId) {
+      formData.append("group_id", groupId);
+    }
+    if (image) {
+      formData.append("image", image);
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user"));
-      const user_id = user.id;
-
-      const payload = {
-        content: postContent,
-        user_id,
-      };
-
-      // Ajouter group_id au payload s'il est fourni
-      if (groupId) {
-        payload.group_id = groupId;
-      }
-
       const response = await axios.post(
         "http://localhost:8000/api/create/post",
-        payload,
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
-      // Si la création du post est réussie, appeler onPostSubmit avec le nouveau post
       if (response.data.post) {
         onPostSubmit(response.data.post);
         setPostContent("");
+        setImage(null);
         toast.success("Post créé avec succès!");
       } else {
         throw new Error("Failed to create post");
@@ -55,23 +64,29 @@ function PostForm({ onPostSubmit, groupId = null }) {
           <textarea
             value={postContent}
             onChange={(e) => setPostContent(e.target.value)}
-            placeholder="A quoi avez-vous joué aujourd'hui?"
+            placeholder="À quoi avez-vous joué aujourd'hui?"
             rows="4"
             className="resize-none w-full p-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
           <div className="flex justify-between items-center mt-3">
             <div className="flex space-x-4 items-center">
-              <button
-                type="button"
-                className="flex items-center justify-center p-2 rounded-full text-blue-500 hover:text-blue-600 transition bg-blue-100 hover:bg-blue-200"
-                aria-label="Ajouter une image"
+              <label
+                htmlFor="imageUpload"
+                className="flex items-center justify-center p-2 rounded-full text-blue-500 hover:text-blue-600 transition bg-blue-100 hover:bg-blue-200 cursor-pointer"
               >
                 <img
                   src="/img/logoImg.webp"
                   className="h-8 w-8"
                   alt="Ajouter une image"
                 />
-              </button>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
               <button
                 type="button"
                 className="flex items-center justify-center p-2 rounded-full text-green-500 hover:text-green-600 transition bg-green-100 hover:bg-green-200"

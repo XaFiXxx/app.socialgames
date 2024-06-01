@@ -51,11 +51,21 @@ function Post({ post }) {
   };
 
   // Inverser les commentaires avant de les passer à CommentList
-  const displayedComments = comments.slice().reverse().slice(0, showMoreComments ? comments.length : 3);
+  const displayedComments = comments
+    .slice()
+    .reverse()
+    .slice(0, showMoreComments ? comments.length : 3);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <p className="text-gray-600">{post.content}</p>
+      {post.image_path && (
+        <img
+          src={`http://localhost:8000/${post.image_path}`}
+          alt="Post"
+          className="mt-4 w-full h-auto rounded-lg"
+        />
+      )}
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={handleLike}
