@@ -55,10 +55,18 @@ const ShowGame = () => {
       console.log("Response data:", response.data);
       if (response.data.message === "Jeu suivi avec succès.") {
         setIsFollowing(true);
+        setGame((prevGame) => ({
+          ...prevGame,
+          users: [...prevGame.users, { id: userId, pivot: { is_wishlist: true } }]
+        }));
       } else if (
         response.data.message === "Vous avez arrêté de suivre ce jeu."
       ) {
         setIsFollowing(false);
+        setGame((prevGame) => ({
+          ...prevGame,
+          users: prevGame.users.filter(user => user.id !== userId)
+        }));
       } else {
         console.error("Unexpected response structure:", response.data);
       }
@@ -70,7 +78,7 @@ const ShowGame = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [id, isFollowing, isLoading]);
+  }, [id, isFollowing, isLoading, userId]);
 
   useEffect(() => {
     console.log("isFollowing has changed:", isFollowing);
