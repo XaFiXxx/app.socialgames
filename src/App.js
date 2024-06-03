@@ -20,6 +20,7 @@ import UserProfil from "./components/profil/UserProfil";
 import ShowGame from "./components/games/ShowGame";
 import IndexGroup from "./components/group/IndexGroup";
 import ShowGroup from "./components/group/ShowGroup";
+import UserGroups from "./components/profil/UserGroups";
 import "./App.css";
 import Footer from "./components/home/Footer";
 
@@ -130,6 +131,16 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <ShowGroup />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/userGroups"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <UserGroups />
               </ProtectedRoute>
             }
           />

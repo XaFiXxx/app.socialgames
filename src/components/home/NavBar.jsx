@@ -103,6 +103,12 @@ function Navbar() {
                   >
                     Vos plateformes
                   </Link>
+                  <Link
+                    to="/userGroups"
+                    className="block px-4 py-2 hover:bg-green-700"
+                  >
+                    Vos groupes
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="block px-4 py-2 w-full bg-red-600 text-left hover:bg-green-700"
