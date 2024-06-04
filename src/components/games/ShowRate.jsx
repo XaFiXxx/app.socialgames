@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaUser, FaStar } from "react-icons/fa"; // Import an icon for user indication
@@ -25,8 +25,8 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
 
   const handleUpdate = async (gameId) => {
     try {
-      await axios.post(
-        `http://localhost:8000/api/games/${gameId}/rate/update`,
+      await api.post(
+        `/api/games/${gameId}/rate/update`,
         {
           review_id: editReviewId,
           rating: editRating,
@@ -52,8 +52,8 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
           label: "Oui",
           onClick: async () => {
             try {
-              await axios.post(
-                `http://localhost:8000/api/games/${gameId}/rate/delete`,
+              await api.post(
+                `/api/games/${gameId}/rate/delete`,
                 { review_id: reviewId },
                 {
                   headers: { Authorization: `Bearer ${token}` },

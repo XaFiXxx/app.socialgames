@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,8 +14,8 @@ function UserGroups() {
     const fetchUserGroups = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/user/groups",
+        const response = await api.get(
+          "/api/user/groups",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -43,7 +43,7 @@ function UserGroups() {
             onClick: async () => {
               const token = localStorage.getItem("token");
               try {
-                await axios.post(`http://localhost:8000/api/group/${groupId}/delete`, {}, {
+                await api.post(`/api/group/${groupId}/delete`, {}, {
                   headers: { Authorization: `Bearer ${token}` },
                 });
                 setGroups(groups.filter((group) => group.id !== groupId));
@@ -78,7 +78,7 @@ function UserGroups() {
           groups.map((group) => (
             <div key={group.id} className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
               <img
-                src={`http://localhost:8000/${group.group_image}`}
+                src={`${process.env.REACT_APP_API_URL}/${group.group_image}`}
                 alt={group.name}
                 className="w-full h-64 object-cover"
               />

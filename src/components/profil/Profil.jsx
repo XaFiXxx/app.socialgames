@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import Jeux from "./Jeux";
@@ -24,8 +24,8 @@ function Profile() {
       if (user?.id) {
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get(
-            `http://localhost:8000/api/users/${user.id}/profile`,
+          const response = await api.get(
+            `/api/users/${user.id}/profile`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -58,7 +58,7 @@ function Profile() {
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
-            src={`http://localhost:8000/${
+            src={`${process.env.REACT_APP_API_URL}/${
               profileData.cover_url || "img/defaultCover.jpg"
             }`}
             alt="Couverture"
@@ -66,7 +66,7 @@ function Profile() {
           />
           <div className="absolute bottom-0 transform translate-y-1/2 bg-white border-4 border-white rounded-full">
             <img
-              src={`http://localhost:8000/${profileData.avatar_url}`}
+              src={`${process.env.REACT_APP_API_URL}/${profileData.avatar_url}`}
               alt="Profil"
               className="h-40 w-40 rounded-full object-cover"
             />

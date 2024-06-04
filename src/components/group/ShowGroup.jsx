@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,16 +15,12 @@ const ShowGroup = () => {
   const fetchGroup = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/group/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.get(`/api/group/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setGroup(response.data);
     } catch (err) {
-      console.error(
-        "Erreur lors de la récupération des détails du groupe:",
-        err
-      );
+      console.error("Erreur lors de la récupération des détails du groupe:", err);
       setError("Erreur lors de la récupération des données");
       toast.error("Erreur lors de la récupération des détails du groupe.");
     } finally {
@@ -39,11 +35,9 @@ const ShowGroup = () => {
   const handleFollowGroup = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/group/${id}/follow`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.post(`/api/group/${id}/follow`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       toast.success(response.data.message); // Afficher le message retourné par le serveur
       setGroup((prevGroup) => ({
         ...prevGroup,
@@ -51,10 +45,7 @@ const ShowGroup = () => {
       }));
     } catch (err) {
       console.error("Erreur lors de la tentative de suivi du groupe:", err);
-      toast.error(
-        err.response.data.message ||
-          "Erreur lors de la tentative de suivi du groupe."
-      );
+      toast.error(err.response.data.message || "Erreur lors de la tentative de suivi du groupe.");
     }
   };
 
@@ -67,8 +58,7 @@ const ShowGroup = () => {
 
   if (loading) return <div className="text-center">Chargement...</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;
-  if (!group)
-    return <div className="text-center text-red-500">Groupe non trouvé.</div>;
+  if (!group) return <div className="text-center text-red-500">Groupe non trouvé.</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -76,7 +66,7 @@ const ShowGroup = () => {
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg">
         <div className="bg-gray-800 mb-6 p-4 rounded-lg">
           <img
-            src={`http://localhost:8000/${group.group_image}`}
+            src={`${process.env.REACT_APP_API_URL}/${group.group_image}`}
             alt={group.name}
             className="w-full h-64 object-cover rounded-lg"
           />
@@ -96,7 +86,7 @@ const ShowGroup = () => {
             {group.game ? (
               <div className="mt-2">
                 <img
-                  src={`http://localhost:8000/${group.game.cover_image}`}
+                  src={`${process.env.REACT_APP_API_URL}/${group.game.cover_image}`}
                   alt={group.game.name}
                   className="w-32 h-32 object-cover rounded-md"
                 />
@@ -104,9 +94,7 @@ const ShowGroup = () => {
                 <p>{group.game.description}</p>
                 <p className="italic">Développé par: {group.game.developer}</p>
                 <p className="italic">Publié par: {group.game.publisher}</p>
-                <p className="italic">
-                  Date de sortie: {group.game.release_date}
-                </p>
+                <p className="italic">Date de sortie: {group.game.release_date}</p>
               </div>
             ) : (
               <p>Aucun jeu associé</p>

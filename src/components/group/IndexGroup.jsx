@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import CardGroup from "./CardGroup"; // Assurez-vous que le chemin d'importation est correct
 import CreateGroup from "./CreateGroup"; // Importez le nouveau composant
 
@@ -13,7 +13,7 @@ const IndexGroup = () => {
     const fetchGroups = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/groups", {
+        const response = await api.get("/api/groups", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -29,14 +29,11 @@ const IndexGroup = () => {
     const fetchGames = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:8000/api/games/index",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await api.get("/api/games/index", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setGames(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des jeux:", error);
@@ -55,16 +52,12 @@ const IndexGroup = () => {
         formData.append(key, value);
       }
 
-      const response = await axios.post(
-        "http://localhost:8000/api/group/create",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await api.post("/api/group/create", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setGroups([...groups, response.data]);
       setIsModalOpen(false);
     } catch (error) {

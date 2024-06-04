@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
 const CreateGroup = ({ games, onCreateGroup, onClose }) => {
   const [newGroupName, setNewGroupName] = useState("");
@@ -16,15 +17,28 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onCreateGroup({
-      name: newGroupName,
-      description: newGroupDescription,
-      game_id: newGroupGameId,
-      group_image: newGroupImage,
-      privacy: newGroupPrivacy,
-    });
+    const formData = new FormData();
+    formData.append("name", newGroupName);
+    formData.append("description", newGroupDescription);
+    formData.append("game_id", newGroupGameId);
+    formData.append("group_image", newGroupImage);
+    formData.append("privacy", newGroupPrivacy);
+
+    try {
+      await api.post("/api/group/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      onCreateGroup(); // Assurez-vous que cette fonction met à jour la liste des groupes après la création
+      onClose(); // Fermer le formulaire après la création
+    } catch (error) {
+      console.error("Failed to create group:", error);
+    }
+
     setNewGroupName("");
     setNewGroupDescription("");
     setNewGroupGameId("");

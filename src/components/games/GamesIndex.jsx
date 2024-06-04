@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import GameCard from "./GameCard"; // Assurez-vous que le chemin est correct
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import "react-toastify/dist/ReactToastify.css";
 
 function GamesIndex() {
@@ -19,14 +19,11 @@ function GamesIndex() {
   const fetchGames = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:8000/api/games/index",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await api.get("/api/games/index", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setGames(response.data);
       console.log(response.data);
     } catch (error) {
@@ -43,8 +40,8 @@ function GamesIndex() {
   const handleToggleFollow = async (gameId, isFollowed) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:8000/api/games/${gameId}/follow`,
+      await api.post(
+        `/api/games/${gameId}/follow`,
         { isFollowed },
         {
           headers: {

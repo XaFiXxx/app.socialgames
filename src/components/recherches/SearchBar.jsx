@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,8 +22,8 @@ function SearchBar() {
     }
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `http://localhost:8000/api/search/suggestions?query=${query}`,
+      const response = await api.get(
+        `/api/search/suggestions?query=${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,8 +77,8 @@ function SearchBar() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `http://localhost:8000/api/search?query=${searchTerm}`,
+      const response = await api.get(
+        `/api/search?query=${searchTerm}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

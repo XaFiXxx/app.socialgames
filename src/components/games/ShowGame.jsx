@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import Rating from "./Rating";
 import ShowRate from "./ShowRate";
 
@@ -19,10 +19,9 @@ const ShowGame = () => {
   const fetchGame = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/game/${id}/${name}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await api.get(`/api/game/${id}/${name}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setGame(response.data);
       console.log("Game details:", response.data);
       const isFollowed = response.data.users?.some(
@@ -47,8 +46,8 @@ const ShowGame = () => {
     console.log("Toggling follow, new isFollowing value:", newIsFollowing);
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/games/${id}/follow`,
+      const response = await api.post(
+        `/api/games/${id}/follow`,
         { isFollowed: newIsFollowing },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -98,7 +97,7 @@ const ShowGame = () => {
       <div className="flex flex-col md:flex-row items-center md:items-start">
         <div className="md:w-1/2">
           <img
-            src={`http://localhost:8000/${game.cover_image}`}
+            src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
             alt={game.name}
             className="w-full h-auto object-cover rounded-lg shadow-md"
           />

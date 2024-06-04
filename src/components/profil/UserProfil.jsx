@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Posts from "../posts/Posts";
@@ -17,8 +17,8 @@ function UserProfile() {
         const userString = localStorage.getItem("user");
         const user = JSON.parse(userString);
 
-        const response = await axios.get(
-          `http://localhost:8000/api/profil/${id}/${username}`,
+        const response = await api.get(
+          `/api/profil/${id}/${username}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -42,8 +42,8 @@ function UserProfile() {
   const handleFollowToggle = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:8000/api/user/follow/${id}`,
+      await api.post(
+        `/api/user/follow/${id}`,
         { follow: !isFollowing },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -70,7 +70,7 @@ function UserProfile() {
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
-            src={`http://localhost:8000/${
+            src={`${process.env.REACT_APP_API_URL}/${
               profileData.cover_url || "img/defaultCover.jpg"
             }`}
             alt="Couverture"
@@ -78,7 +78,7 @@ function UserProfile() {
           />
           <div className="absolute bottom-0 transform translate-y-1/2 bg-white border-4 border-white rounded-full">
             <img
-              src={`http://localhost:8000/${profileData.avatar_url}`}
+              src={`${process.env.REACT_APP_API_URL}/${profileData.avatar_url}`}
               alt="Profil"
               className="h-40 w-40 rounded-full object-cover"
             />

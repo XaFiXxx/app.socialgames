@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
 
 function PostForm({ onPostSubmit, groupId = null }) {
@@ -44,8 +44,8 @@ function PostForm({ onPostSubmit, groupId = null }) {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/create/post",
+      const response = await api.post(
+        "/api/create/post",
         formData,
         {
           headers: {

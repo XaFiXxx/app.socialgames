@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
 const Rating = ({
   gameId,
@@ -16,8 +16,8 @@ const Rating = ({
 
   const submitRatingAndReview = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/games/${gameId}/rate`,
+      const response = await api.post(
+        `/api/games/${gameId}/rate`,
         { game_id: gameId, user_id: userId, rating, review },
         { headers: { Authorization: `Bearer ${token}` } }
       );

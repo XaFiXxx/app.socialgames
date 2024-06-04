@@ -6,7 +6,7 @@ const CardGroup = ({ group }) => {
     <div className="bg-gray-800 text-white p-4 rounded-lg shadow-lg">
       <div className="mb-2">
         <img
-          src={`http://localhost:8000/${group.group_image}`}
+          src={`${process.env.REACT_APP_API_URL}/${group.group_image}`}
           alt={`${group.name} cover`}
           className="w-full h-32 object-cover rounded-lg"
         />

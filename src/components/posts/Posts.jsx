@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from '../../axiosConfig';
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import { CommentInput, CommentList } from "./comments";
 
@@ -12,8 +12,8 @@ function Post({ post }) {
 
   const addComment = async (text) => {
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/post/${post.id}/comment`,
+      const response = await api.post(
+        `/api/post/${post.id}/comment`,
         { content: text },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -27,8 +27,8 @@ function Post({ post }) {
 
   const handleLike = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/post/${post.id}/like`,
+      const response = await api.post(
+        `/api/post/${post.id}/like`,
         {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -61,7 +61,7 @@ function Post({ post }) {
       <p className="text-gray-600">{post.content}</p>
       {post.image_path && (
         <img
-          src={`http://localhost:8000/${post.image_path}`}
+          src={`${process.env.REACT_APP_API_URL}/${post.image_path}`}
           alt="Post"
           className="mt-4 w-full h-auto rounded-lg"
         />

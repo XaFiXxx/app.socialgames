@@ -25,7 +25,7 @@ function GameCarousel({ games }) {
           <SwiperSlide key={index}>
             <div className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
               <img
-                src={`http://localhost:8000/${game.cover_image}`} // Vérifie l'exactitude du chemin
+                src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
                 alt={game.name}
                 className="w-full h-64 object-cover"
               />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,10 +13,10 @@ function FormPlateforms({ onSave }) {
       try {
         const [allPlatformsResponse, userPlatformsResponse] = await Promise.all(
           [
-            axios.get("http://localhost:8000/api/platforms", {
+            api.get("/api/platforms", {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get("http://localhost:8000/api/user/platforms", {
+            api.get("/api/user/platforms", {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]
@@ -55,8 +55,8 @@ function FormPlateforms({ onSave }) {
   const submitPlatforms = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.post(
-        "http://localhost:8000/api/user/update/platforms",
+      await api.post(
+        "/api/user/update/platforms",
         {
           platforms: Array.from(selectedPlatforms),
         },

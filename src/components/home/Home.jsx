@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PostForm from "../posts/PostForm";
@@ -14,7 +14,7 @@ function Home() {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/home", {
+        const response = await api.get("/api/home", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPosts(response.data.posts);

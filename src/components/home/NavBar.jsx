@@ -30,6 +30,8 @@ function Navbar() {
     );
   };
 
+  const baseURL = process.env.REACT_APP_IMAGE_URL;
+
   return (
     <nav className="bg-green-700 text-gray-900 shadow">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -82,7 +84,7 @@ function Navbar() {
                 <img
                   src={
                     user?.avatar_url
-                      ? `http://127.0.0.1:8000/${user.avatar_url}`
+                      ? `${baseURL}/${user.avatar_url}`
                       : "/img/defaultUser.webp"
                   }
                   alt="Avatar"

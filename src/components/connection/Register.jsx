@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
 function Register() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Register() {
     }
 
     try {
-      await axios.post("http://localhost:8000/api/register", data, {
+      await api.post("/api/register", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

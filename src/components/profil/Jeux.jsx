@@ -14,7 +14,7 @@ function Jeux({ games }) {
       {filteredGames.map((game) => (
         <div key={game.id} className="card">
           <img
-            src={`http://127.0.0.1:8000/${game.cover_image}`}
+            src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
             alt={game.name}
             className="w-full h-32 object-cover rounded-lg"
           />
