@@ -9,6 +9,7 @@ import CreateGroup from "../group/CreateGroup"; // Assurez-vous que le chemin d'
 
 function UserGroups() {
   const [groups, setGroups] = useState([]);
+  const [followedGroups, setFollowedGroups] = useState([]); // État pour les groupes suivis
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false); // État pour le modal
   const [games, setGames] = useState([]); // État pour les jeux
@@ -23,7 +24,9 @@ function UserGroups() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        console.log(response.data);
         setGroups(response.data.groups);
+        setFollowedGroups(response.data.followed_groups); // Assurez-vous que l'API renvoie également les groupes suivis
         setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des groupes:", error);
@@ -104,7 +107,11 @@ function UserGroups() {
       >
         Créer un nouveau groupe
       </button>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      
+      <h3 className="text-xl text-gray-200 font-bold text-center mb-4">
+        Groupes que je gère
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {groups.length > 0 ? (
           groups.map((group) => (
             <div key={group.id} className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
@@ -129,6 +136,37 @@ function UserGroups() {
                   >
                     Supprimer
                   </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-200">Aucun groupe trouvé.</p>
+        )}
+      </div>
+
+      <h3 className="text-xl text-gray-200 font-bold text-center mb-4">
+        Groupes que je suis
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {followedGroups.length > 0 ? (
+          followedGroups.map((group) => (
+            <div key={group.id} className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
+              <img
+                src={`${process.env.REACT_APP_API_URL}/${group.group_image}`}
+                alt={group.name}
+                className="w-full h-64 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-lg font-bold text-white">{group.name}</h3>
+                <p className="text-gray-300 truncate">{group.description}</p>
+                <div className="mt-4 text-center">
+                  <Link
+                    to={`/group/${group.id}`}
+                    className="text-gray-200 btn btn-blue hover:underline mt-2 block"
+                  >
+                    Voir les détails
+                  </Link>
                 </div>
               </div>
             </div>

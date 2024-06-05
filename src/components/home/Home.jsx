@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
@@ -34,6 +34,7 @@ function Home() {
 
   return (
     <div className="bg-gray-800 text-gray-200 min-h-screen">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <section className="text-center pt-8">
         <h1 className="text-5xl font-bold mb-4">Bienvenue sur GameSocial</h1>
         <p className="text-xl mb-8">

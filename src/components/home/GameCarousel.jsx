@@ -23,25 +23,19 @@ function GameCarousel({ games }) {
       >
         {games.map((game, index) => (
           <SwiperSlide key={index}>
-            <div className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
-              <img
-                src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
-                alt={game.name}
-                className="w-full h-64 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-white">{game.name}</h3>
-                <p className="text-gray-300 truncate">{game.description}</p>
-                <div className="mt-4 text-center">
-                  <Link
-                    to={`/game/${game.id}/${game.name}`}
-                    className="text-gray-200 hover:underline mt-2 block"
-                  >
-                    View Details
-                  </Link>
+            <Link to={`/game/${game.id}/${game.name}`} className="block">
+              <div className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                <img
+                  src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
+                  alt={game.name}
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-white">{game.name}</h3>
+                  <p className="text-gray-300 truncate">{game.description}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>
