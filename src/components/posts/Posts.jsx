@@ -58,6 +58,9 @@ function Post({ post }) {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
+      <div className="mb-2">
+        <p className="text-gray-800 font-bold">{post.user.username}</p>
+      </div>
       <p className="text-gray-600">{post.content}</p>
       {post.image_path && (
         <img

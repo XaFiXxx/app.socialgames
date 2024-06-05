@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import api from '../../axiosConfig';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PostForm from "../posts/PostForm";
@@ -9,6 +9,7 @@ import GameCarousel from "./GameCarousel";
 function Home() {
   const [posts, setPosts] = useState([]);
   const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(true); // Ajout d'un état pour le chargement
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -17,12 +18,17 @@ function Home() {
         const response = await api.get("/api/home", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setPosts(response.data.posts);
-        setGames(response.data.games);
-        console.log(response.data);
+        if (response.data) {
+          setPosts(response.data.posts);
+          setGames(response.data.games);
+        } else {
+          throw new Error("Données invalides reçues de l'API.");
+        }
       } catch (error) {
         console.error("Erreur lors de la récupération des posts:", error);
         toast.error("Impossible de récupérer les posts.");
+      } finally {
+        setLoading(false); // Terminer le chargement après la tentative de récupération des données
       }
     };
     fetchPosts();
@@ -46,15 +52,23 @@ function Home() {
         <PostForm onPostSubmit={handleNewPost} />
       </div>
 
-      <section className="flex flex-col items-center mb-8">
-        <h2 className="text-3xl font-bold mt-8">Derniers posts</h2>
-        <Posts posts={posts} />
-      </section>
+      {loading ? (
+        <div className="text-center mt-8">
+          <p>Chargement des données...</p>
+        </div>
+      ) : (
+        <>
+          <section className="flex flex-col items-center mb-8">
+            <h2 className="text-3xl font-bold mt-8">Derniers posts</h2>
+            <Posts posts={posts} />
+          </section>
 
-      <section className="flex flex-col items-center mb-8">
-        <h2 className="text-3xl font-bold mt-8">Jeux populaires</h2>
-        <GameCarousel games={games} />
-      </section>
+          <section className="flex flex-col items-center mb-8">
+            <h2 className="text-3xl font-bold mt-8">Jeux populaires</h2>
+            <GameCarousel games={games} />
+          </section>
+        </>
+      )}
     </div>
   );
 }
