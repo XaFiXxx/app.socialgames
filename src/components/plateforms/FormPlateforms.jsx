@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function FormPlateforms({ onSave }) {
@@ -84,6 +84,7 @@ function FormPlateforms({ onSave }) {
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <h3 className="text-gray-100 text-lg font-bold mb-2">
         Choisissez vos plateformes de jeux :
       </h3>

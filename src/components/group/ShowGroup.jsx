@@ -62,7 +62,7 @@ const ShowGroup = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <ToastContainer />
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg">
         <div className="bg-gray-800 mb-6 p-4 rounded-lg">
           <img

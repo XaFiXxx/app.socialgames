@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import CardGroup from "./CardGroup"; // Assurez-vous que le chemin d'importation est correct
 import CreateGroup from "./CreateGroup"; // Importez le nouveau composant
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const IndexGroup = () => {
   const [groups, setGroups] = useState([]);
@@ -44,25 +46,10 @@ const IndexGroup = () => {
     fetchGames();
   }, []);
 
-  const handleCreateGroup = async (groupData) => {
-    try {
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
-      for (const [key, value] of Object.entries(groupData)) {
-        formData.append(key, value);
-      }
-
-      const response = await api.post("/api/group/create", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setGroups([...groups, response.data]);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Erreur lors de la création du groupe:", error);
-    }
+  const handleCreateGroup = (groupData) => {
+    setGroups((prevGroups) => [...prevGroups, groupData]);
+    setIsModalOpen(false);
+    toast.success("Groupe créé avec succès!");
   };
 
   if (loading) {
@@ -71,6 +58,7 @@ const IndexGroup = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <h1 className="text-xl font-bold text-gray-200 text-center mb-4">
         Liste des Groupes
       </h1>

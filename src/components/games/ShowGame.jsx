@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Rating from "./Rating";
 import ShowRate from "./ShowRate";
 
@@ -30,6 +32,7 @@ const ShowGame = () => {
       setIsFollowing(isFollowed);
     } catch (error) {
       console.error("Failed to fetch game details:", error);
+      toast.error("Erreur lors de la récupération des détails du jeu.");
     }
   }, [id, name, userId]);
 
@@ -58,22 +61,21 @@ const ShowGame = () => {
           ...prevGame,
           users: [...prevGame.users, { id: userId, pivot: { is_wishlist: true } }]
         }));
-      } else if (
-        response.data.message === "Vous avez arrêté de suivre ce jeu."
-      ) {
+        toast.success("Jeu suivi avec succès.");
+      } else if (response.data.message === "Vous avez arrêté de suivre ce jeu.") {
         setIsFollowing(false);
         setGame((prevGame) => ({
           ...prevGame,
           users: prevGame.users.filter(user => user.id !== userId)
         }));
+        toast.success("Vous avez arrêté de suivre ce jeu.");
       } else {
         console.error("Unexpected response structure:", response.data);
+        toast.error("Réponse inattendue du serveur.");
       }
     } catch (error) {
-      console.error(
-        "Failed to toggle follow:",
-        error.response?.data?.message || "Error"
-      );
+      console.error("Failed to toggle follow:", error.response?.data?.message || "Error");
+      toast.error(error.response?.data?.message || "Erreur lors de la tentative de suivi du jeu.");
     } finally {
       setIsLoading(false);
     }
@@ -88,12 +90,11 @@ const ShowGame = () => {
   }
 
   const genreNames = game.genres.map((genre) => genre.name).join(", ");
-  const platformNames = game.platforms
-    .map((platform) => platform.name)
-    .join(", ");
+  const platformNames = game.platforms.map((platform) => platform.name).join(", ");
 
   return (
     <div className="bg-gray-900 min-h-screen text-white p-8 rounded-lg shadow-lg">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <div className="flex flex-col md:flex-row items-center md:items-start">
         <div className="md:w-1/2">
           <img

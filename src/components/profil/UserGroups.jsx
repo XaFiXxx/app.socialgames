@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import api from '../../axiosConfig';
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import CreateGroup from "../group/CreateGroup"; // Assurez-vous que le chemin d'importation est correct
 
 function UserGroups() {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false); // État pour le modal
+  const [games, setGames] = useState([]); // État pour les jeux
 
   useEffect(() => {
     const fetchUserGroups = async () => {
@@ -29,7 +32,22 @@ function UserGroups() {
       }
     };
 
+    const fetchGames = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await api.get("/api/games/index", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setGames(response.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des jeux:", error);
+      }
+    };
+
     fetchUserGroups();
+    fetchGames();
   }, []);
 
   const handleDelete = async (groupId) => {
@@ -64,15 +82,28 @@ function UserGroups() {
     confirmDelete();
   };
 
+  const handleCreateGroup = (groupData) => {
+    setGroups((prevGroups) => [...prevGroups, groupData]);
+    setIsModalOpen(false);
+    toast.success("Groupe créé avec succès!");
+  };
+
   if (loading) {
     return <div className="text-center text-gray-300">Chargement des groupes...</div>;
   }
 
   return (
     <div className="container mx-auto p-4 min-h-screen">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <h2 className="text-2xl text-gray-200 font-bold text-center mb-4">
         Mes Groupes
       </h2>
+      <button
+        className="mb-4 px-4 py-2 bg-green-500 text-white rounded"
+        onClick={() => setIsModalOpen(true)}
+      >
+        Créer un nouveau groupe
+      </button>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {groups.length > 0 ? (
           groups.map((group) => (
@@ -106,6 +137,14 @@ function UserGroups() {
           <p className="text-gray-200">Aucun groupe trouvé.</p>
         )}
       </div>
+
+      {isModalOpen && (
+        <CreateGroup
+          games={games}
+          onCreateGroup={handleCreateGroup}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

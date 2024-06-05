@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import api from "../../axiosConfig";
 
 const CreateGroup = ({ games, onCreateGroup, onClose }) => {
   const [newGroupName, setNewGroupName] = useState("");
@@ -8,6 +8,7 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
   const [newGroupImage, setNewGroupImage] = useState(null);
   const [newGroupImagePreview, setNewGroupImagePreview] = useState("");
   const [newGroupPrivacy, setNewGroupPrivacy] = useState("public");
+  const [isSubmitting, setIsSubmitting] = useState(false); // Ajoutez un état pour la soumission
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -19,6 +20,9 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Empêcher les multiples soumissions
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("name", newGroupName);
     formData.append("description", newGroupDescription);
@@ -27,16 +31,18 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
     formData.append("privacy", newGroupPrivacy);
 
     try {
-      await api.post("/api/group/create", formData, {
+      const response = await api.post("/api/group/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      onCreateGroup(); // Assurez-vous que cette fonction met à jour la liste des groupes après la création
+      onCreateGroup(response.data); // Passer directement les données du groupe créé
       onClose(); // Fermer le formulaire après la création
     } catch (error) {
       console.error("Failed to create group:", error);
+    } finally {
+      setIsSubmitting(false);
     }
 
     setNewGroupName("");
@@ -131,8 +137,9 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={isSubmitting} // Désactiver le bouton pendant la soumission
             >
-              Créer
+              {isSubmitting ? "Création en cours..." : "Créer"}
             </button>
           </div>
         </form>
