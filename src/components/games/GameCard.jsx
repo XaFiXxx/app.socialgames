@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+
 
 const GameCard = ({ game, onToggleFollow, userId }) => {
   const isFollowed = game.users?.some(

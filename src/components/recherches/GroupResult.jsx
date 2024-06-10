@@ -5,7 +5,7 @@ function GroupResult({ group }) {
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-lg overflow-hidden">
       <img
-        src={`http://localhost:8000/${group.group_image}`}
+        src={`${process.env.REACT_APP_API_URL}/${group.group_image}`}
         alt={group.name}
         className="w-full h-64 object-cover"
       />

@@ -6,7 +6,7 @@ function UserResult({ user }) {
     <div className="bg-gray-600 p-4 rounded-lg shadow-lg overflow-hidden">
       <div className="flex items-center space-x-4">
         <img
-          src={`http://localhost:8000/${user.avatar_url}`}
+          src={`${process.env.REACT_APP_API_URL}/${user.avatar_url}`}
           alt={`Avatar de ${user.username}`}
           className="w-16 h-16 rounded-full object-cover"
         />

@@ -6,7 +6,7 @@ function GameResult({ game }) {
   return (
     <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 ease-in-out m-4">
       <img
-        src={`http://localhost:8000/${game.cover_image}`}
+        src={`${process.env.REACT_APP_API_URL}/${game.cover_image}`}
         alt={game.name}
         className="w-full h-64 object-cover"
       />

@@ -16,7 +16,7 @@ function SearchBar() {
 
   // Fonction pour charger les suggestions de manière délayée
   const fetchSuggestions = async (query) => {
-    if (!query) {
+    if (!query || query.length < 3) {
       setSuggestions([]);
       return;
     }
@@ -59,19 +59,23 @@ function SearchBar() {
     const { value } = e.target;
     setSearchTerm(value);
     clearTimeout(debounceTimeout);
-    const newTimeout = setTimeout(() => {
-      fetchSuggestions(value);
-    }, 300);
-    setDebounceTimeout(newTimeout);
+    if (value.length >= 3) {
+      const newTimeout = setTimeout(() => {
+        fetchSuggestions(value);
+      }, 300);
+      setDebounceTimeout(newTimeout);
+    } else {
+      setSuggestions([]);
+    }
     setSelectedSuggestionIndex(-1); // Reset selection
   };
 
   // Fonction pour gérer la soumission du formulaire
   const handleSearch = async (event) => {
     event.preventDefault();
-    if (!searchTerm.trim()) {
-      // Afficher un message d'erreur ou empêcher la recherche si le terme de recherche est vide
-      toast.error("Veuillez entrer un terme de recherche.");
+    if (!searchTerm.trim() || searchTerm.length < 3) {
+      // Afficher un message d'erreur ou empêcher la recherche si le terme de recherche est vide ou inférieur à 3 caractères
+      toast.error("Veuillez entrer au moins 3 caractères pour la recherche.");
       return;
     }
     setLoading(true);
@@ -118,57 +122,59 @@ function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="relative">
-      <ToastContainer />
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleInputChange}
-        onFocus={() => setIsFocused(true)}
-        onKeyDown={handleKeyDown}
-        placeholder="Rechercher..."
-        className="px-3 py-2 rounded bg-gray-200 text-gray-700 focus:outline-none focus:bg-white focus:text-gray-900 w-full"
-        disabled={loading}
-      />
-      {isFocused && suggestions.length > 0 && (
-        <ul
-          className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-auto"
-          ref={suggestionsRef}
-        >
-          {suggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              className={`p-2 cursor-pointer ${
-                index === selectedSuggestionIndex
-                  ? "bg-gray-200"
-                  : "hover:bg-gray-100"
-              }`}
-              onMouseDown={(e) => e.preventDefault()} // Prevents losing focus on the input
-              onClick={() => {
-                setSearchTerm(suggestion.label); // Utilise le champ 'label' pour remplir le champ de recherche
-                setSuggestions([]); // Vide les suggestions après sélection
-                setIsFocused(false); // Cache les suggestions après sélection
-              }}
-            >
-              {suggestion.label}
-            </li>
-          ))}
-        </ul>
-      )}
-      <button
-        type="submit"
-        className="absolute right-2 top-2 text-pink-400 focus:outline-none"
-        disabled={loading}
-      >
-        {loading ? (
-          "Chargement..."
-        ) : (
-          <span role="img" aria-label="Rechercher">
-            🔍
-          </span>
+    <div className="relative">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleInputChange}
+          onFocus={() => setIsFocused(true)}
+          onKeyDown={handleKeyDown}
+          placeholder="Rechercher..."
+          className="px-3 py-2 rounded bg-gray-200 text-gray-700 focus:outline-none focus:bg-white focus:text-gray-900 w-full"
+          disabled={loading}
+        />
+        {isFocused && suggestions.length > 0 && (
+          <ul
+            className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-auto"
+            ref={suggestionsRef}
+          >
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                className={`p-2 cursor-pointer ${
+                  index === selectedSuggestionIndex
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onMouseDown={(e) => e.preventDefault()} // Prevents losing focus on the input
+                onClick={() => {
+                  setSearchTerm(suggestion.label); // Utilise le champ 'label' pour remplir le champ de recherche
+                  setSuggestions([]); // Vide les suggestions après sélection
+                  setIsFocused(false); // Cache les suggestions après sélection
+                }}
+              >
+                {suggestion.label}
+              </li>
+            ))}
+          </ul>
         )}
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="absolute right-2 top-2 text-pink-400 focus:outline-none"
+          disabled={loading}
+        >
+          {loading ? (
+            "Chargement..."
+          ) : (
+            <span role="img" aria-label="Rechercher">
+              🔍
+            </span>
+          )}
+        </button>
+      </form>
+    </div>
   );
 }
 
