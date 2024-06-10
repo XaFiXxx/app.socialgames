@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import Jeux from "./Jeux";
 import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
+import EditProfile from "./EditProfile"; // Assurez-vous que le chemin est correct
+import 'react-toastify/dist/ReactToastify.css';
 
 function Profile() {
   const { user } = useAuth();
   const [profileData, setProfileData] = useState({
+    name: "",
+    surname: "",
     username: "",
+    email: "",
     biography: "",
     avatar_url: "",
     cover_url: "",
@@ -22,6 +27,7 @@ function Profile() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageType, setImageType] = useState("");
+  const [isEditing, setIsEditing] = useState(false); // Nouvel état pour l'édition
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,10 +115,16 @@ function Profile() {
     }
   };
 
-  const sortedPosts = profileData.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const handleProfileUpdate = (updatedProfile) => {
+    setProfileData(updatedProfile);
+    window.location.reload(); // Recharger la page après la mise à jour du profil
+  };
+
+  const sortedPosts = profileData.posts?.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) || [];
 
   return (
     <div className="bg-gray-900 text-gray-700 min-h-screen">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
@@ -191,28 +203,29 @@ function Profile() {
 
         <div className="text-center">
           <h1 className="text-4xl text-gray-200 font-bold">
-            {profileData.username}
+            {`${profileData.name} ${profileData.surname}`}
           </h1>
+          <h2 className="text-2xl text-gray-400">{profileData.username}</h2>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
-          <button className="btn btn-blue" title="Modifier le profil">
-            <span className="material-symbols-outlined align-middle text-lg">
-              edit
-            </span>
-            <span className="ml-2">Modifier le profil</span>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="btn btn-blue ml-2"
+          >
+            Modifier le profil
           </button>
         </div>
 
         {/* Section pour afficher les plateformes */}
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
-            {profileData.platforms.map((platform) => (
+            {profileData.platforms?.map((platform) => (
               <div
                 key={platform.id}
                 className="bg-green-700 text-gray-200 rounded px-4 py-2 shadow"
               >
                 {platform.name}
               </div>
-            ))}
+            )) || <p className="text-gray-200">Pas de plateformes disponibles</p>}
           </div>
         </div>
 
@@ -232,6 +245,13 @@ function Profile() {
           <Jeux games={profileData.games || []} />
         </div>
       </div>
+      {isEditing && (
+        <EditProfile
+          profileData={profileData}
+          onClose={() => setIsEditing(false)}
+          onSave={handleProfileUpdate}
+        />
+      )}
     </div>
   );
 }
