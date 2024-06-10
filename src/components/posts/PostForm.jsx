@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
 
-function PostForm({ onPostSubmit, groupId = null }) {
+function PostForm({ groupId = null }) {
   const [postContent, setPostContent] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
@@ -56,11 +56,8 @@ function PostForm({ onPostSubmit, groupId = null }) {
       );
 
       if (response.data.post) {
-        onPostSubmit(response.data.post);
-        setPostContent("");
-        setImage(null);
-        setImagePreviewUrl(""); // Réinitialiser la prévisualisation de l'image
         toast.success("Post créé avec succès!");
+        window.location.reload(); // Rafraîchir la page après la création du post
       } else {
         throw new Error("Failed to create post");
       }

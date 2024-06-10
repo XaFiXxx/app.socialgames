@@ -60,6 +60,8 @@ const ShowGroup = () => {
   if (error) return <div className="text-center text-red-500">{error}</div>;
   if (!group) return <div className="text-center text-red-500">Groupe non trouvé.</div>;
 
+  const sortedPosts = group.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
     <div className="container mx-auto p-4">
       <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
@@ -116,7 +118,7 @@ const ShowGroup = () => {
           {/* Intégration du composant Posts */}
           <div className="mt-4">
             <h2 className="font-bold">Posts récents:</h2>
-            <Posts posts={group.posts} />
+            <Posts posts={sortedPosts} />
           </div>
         </div>
       </div>

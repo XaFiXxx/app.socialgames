@@ -53,6 +53,8 @@ function Profile() {
     }));
   };
 
+  const sortedPosts = profileData.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
     <div className="bg-gray-900 text-gray-700 min-h-screen">
       <div className="container mx-auto p-4">
@@ -121,7 +123,7 @@ function Profile() {
           <h2 className="text-xl text-gray-200 font-bold text-center">
             Vos Posts
           </h2>
-          <Posts posts={profileData.posts || []} />
+          <Posts posts={sortedPosts} />
         </section>
 
         <div className="mt-8">
