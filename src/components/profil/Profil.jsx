@@ -18,6 +18,10 @@ function Profile() {
     friends: [],
     platforms: [],
   });
+  const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const [imageType, setImageType] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +36,6 @@ function Profile() {
           );
           if (response.data) {
             setProfileData(response.data);
-            console.log(response.data);
           } else {
             throw new Error("Data not found");
           }
@@ -53,6 +56,59 @@ function Profile() {
     }));
   };
 
+  const handleImageChange = async () => {
+    if (!selectedImage) return;
+
+    const formData = new FormData();
+    formData.append(imageType, selectedImage);
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await api.post(
+        imageType === "avatar" ? '/api/user/update/profil_img' : '/api/user/update/cover_img',
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setProfileData((prevData) => ({
+        ...prevData,
+        [`${imageType}_url`]: response.data[`${imageType}_url`],
+      }));
+      setSelectedImage(null);
+      setImagePreviewUrl("");
+      toast.success(`${imageType === "avatar" ? "Photo de profil" : "Photo de couverture"} mise à jour avec succès!`);
+    } catch (error) {
+      console.error(`Erreur lors de la mise à jour de la ${imageType}:`, error);
+      toast.error(`Erreur lors de la mise à jour de la ${imageType}.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setImageType(type);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+      if (type === "avatar" && profileData.avatar_url !== "storage/img/users/defaultUser.webp") {
+        toast.info("L'ancienne photo de profil sera supprimée du serveur.");
+      } else if (type === "cover" && profileData.cover_url !== "storage/img/users/defaultCover.webp") {
+        toast.info("L'ancienne photo de couverture sera supprimée du serveur.");
+      }
+    }
+  };
+
   const sortedPosts = profileData.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   return (
@@ -66,27 +122,72 @@ function Profile() {
             alt="Couverture"
             className="w-full h-96 object-cover rounded-lg shadow-md"
           />
+          <input
+            type="file"
+            id="coverUpload"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e, "cover")}
+          />
           <div className="absolute bottom-0 transform translate-y-1/2 bg-white border-4 border-white rounded-full">
             <img
               src={`${process.env.REACT_APP_API_URL}/${profileData.avatar_url}`}
               alt="Profil"
               className="h-40 w-40 rounded-full object-cover"
             />
-            <button
-              className="btn btn-blue absolute right-1 bottom-2 flex items-center justify-center"
+            <input
+              type="file"
+              id="avatarUpload"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => handleFileChange(e, "avatar")}
+            />
+            <label
+              htmlFor="avatarUpload"
+              className="btn btn-blue absolute right-1 bottom-2 flex items-center justify-center cursor-pointer"
               title="Éditer la photo de profil"
             >
               <span className="material-symbols-outlined">photo_camera</span>
-            </button>
+            </label>
           </div>
-          <button
-            className="btn btn-blue absolute right-0 bottom-0 mb-4 mr-4 flex items-center justify-center space-x-2"
+          <label
+            htmlFor="coverUpload"
+            className="btn btn-blue absolute right-0 bottom-0 mb-4 mr-4 flex items-center justify-center space-x-2 cursor-pointer"
             title="Éditer la photo de couverture"
           >
             <span className="material-symbols-outlined">photo_camera</span>
             <span>Éditer la photo de couverture</span>
-          </button>
+          </label>
         </div>
+
+        {imagePreviewUrl && (
+          <div className="mb-4 text-center">
+            <img
+              src={imagePreviewUrl}
+              alt="Prévisualisation"
+              className="mx-auto rounded-lg shadow-md"
+              style={{ maxWidth: "200px", maxHeight: "200px" }}
+            />
+            <div className="mt-2">
+              <button
+                onClick={handleImageChange}
+                className="btn btn-green"
+                disabled={loading}
+              >
+                {loading ? "Chargement..." : "Confirmer"}
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedImage(null);
+                  setImagePreviewUrl("");
+                }}
+                className="btn btn-red ml-2"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="text-center">
           <h1 className="text-4xl text-gray-200 font-bold">

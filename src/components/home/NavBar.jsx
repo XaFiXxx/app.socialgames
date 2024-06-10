@@ -30,7 +30,7 @@ function Navbar() {
     );
   };
 
-  const baseURL = process.env.REACT_APP_IMAGE_URL;
+  const baseURL = process.env.REACT_APP_API_URL; // Assurez-vous que cette variable est correctement définie dans vos variables d'environnement
 
   return (
     <nav className="bg-green-700 text-gray-900 shadow">

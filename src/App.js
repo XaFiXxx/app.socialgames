@@ -5,8 +5,6 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Assure-toi que les styles sont aussi importés ici
 import Home from "./components/home/Home";
 import Register from "./components/connection/Register";
 import Login from "./components/connection/Login";
@@ -145,18 +143,6 @@ function App() {
             }
           />
         </Routes>
-
-        <ToastContainer
-          position="bottom-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
         <Footer />
       </Router>
     </div>
