@@ -8,6 +8,8 @@ function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
+    name: "",
+    surname: "",
     email: "",
     password: "",
     location: "",
@@ -54,6 +56,15 @@ function Register() {
     }
   };
 
+  const europeanCountries = [
+    'Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium', 'Bosnia and Herzegovina',
+    'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Georgia',
+    'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland', 'Italy', 'Kazakhstan', 'Kosovo', 'Latvia', 'Liechtenstein',
+    'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia', 'Norway',
+    'Poland', 'Portugal', 'Romania', 'Russia', 'San Marino', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'
+  ];
+
   return (
     <div className="min-h-screen bg-gray-900 flex justify-center items-center px-6">
       <div className="max-w-md w-full space-y-8">
@@ -81,6 +92,36 @@ function Register() {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Nom d'utilisateur"
                 value={formData.username}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Prénom
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Prénom"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="surname" className="sr-only">
+                Nom
+              </label>
+              <input
+                type="text"
+                id="surname"
+                name="surname"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Nom"
+                value={formData.surname}
                 onChange={handleChange}
               />
             </div>
@@ -126,22 +167,11 @@ function Register() {
                 onChange={handleChange}
               >
                 <option value="">Sélectionner un pays</option>
-                <option value="France">France</option>
-                <option value="Germany">Allemagne</option>
-                <option value="Italy">Italie</option>
-                <option value="Spain">Espagne</option>
-                <option value="United Kingdom">Royaume-Uni</option>
-                <option value="Belgium">Belgique</option>
-                <option value="Netherlands">Pays-Bas</option>
-                <option value="Sweden">Suède</option>
-                <option value="Denmark">Danemark</option>
-                <option value="Norway">Norvège</option>
-                <option value="Finland">Finlande</option>
-                <option value="Switzerland">Suisse</option>
-                <option value="Austria">Autriche</option>
-                <option value="Portugal">Portugal</option>
-                <option value="Greece">Grèce</option>
-                <option value="Ireland">Irlande</option>
+                {europeanCountries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
