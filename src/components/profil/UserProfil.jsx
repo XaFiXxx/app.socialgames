@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import Posts from "../posts/Posts";
 import Jeux from "./Jeux";
 
@@ -67,6 +68,7 @@ function UserProfile() {
 
   return (
     <div className="bg-gray-900 text-gray-700 min-h-screen">
+      <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar newestOnTop closeOnClick />
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
@@ -87,8 +89,9 @@ function UserProfile() {
 
         <div className="text-center">
           <h1 className="text-4xl text-gray-200 font-bold">
-            {profileData.username}
+            {`${profileData.name} ${profileData.surname}`}
           </h1>
+          <h2 className="text-2xl text-gray-400">@{profileData.username}</h2>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
           <button
             onClick={handleFollowToggle}
@@ -100,24 +103,24 @@ function UserProfile() {
 
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
-            {profileData.platforms.map((platform) => (
+            {profileData.platforms?.map((platform) => (
               <div
                 key={platform.id}
                 className="bg-green-700 text-gray-200 rounded px-4 py-2 shadow"
               >
                 {platform.name}
               </div>
-            ))}
+            )) || <p className="text-gray-200">Pas de plateformes disponibles</p>}
           </div>
         </div>
 
         <div className="mt-4 w-full max-w-4xl mx-auto ">
-          <Posts posts={profileData.posts} />
+          <Posts posts={profileData.posts || []} />
         </div>
 
         <div className="mt-8">
           <h2 className="text-xl text-gray-200 font-bold">Jeux préférés</h2>
-          <Jeux games={profileData.games} />
+          <Jeux games={profileData.games || []} />
         </div>
       </div>
     </div>

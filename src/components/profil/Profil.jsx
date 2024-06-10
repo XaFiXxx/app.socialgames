@@ -115,12 +115,12 @@ function Profile() {
     }
   };
 
-  const handleProfileUpdate = (updatedProfile) => {
-    setProfileData(updatedProfile);
-    window.location.reload(); // Recharger la page après la mise à jour du profil
+  const handleProfileUpdate = () => {
+    // Reload the page to get updated profile data
+    window.location.reload();
   };
 
-  const sortedPosts = profileData.posts?.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) || [];
+  const sortedPosts = profileData.posts.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   return (
     <div className="bg-gray-900 text-gray-700 min-h-screen">
@@ -205,7 +205,7 @@ function Profile() {
           <h1 className="text-4xl text-gray-200 font-bold">
             {`${profileData.name} ${profileData.surname}`}
           </h1>
-          <h2 className="text-2xl text-gray-400">{profileData.username}</h2>
+          <h2 className="text-2xl text-gray-400">@{profileData.username}</h2>
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
           <button
             onClick={() => setIsEditing(true)}
