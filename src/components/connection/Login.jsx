@@ -8,7 +8,7 @@ import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [credentials, setCredentials] = useState({ identifier: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -19,7 +19,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (!credentials.email || !credentials.password) {
+    if (!credentials.identifier || !credentials.password) {
       toast.error('Veuillez remplir tous les champs requis.');
       return;
     }
@@ -46,16 +46,16 @@ function Login() {
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
-                <label htmlFor="email" className="sr-only">E-mail</label>
+                <label htmlFor="identifier" className="sr-only">E-mail ou Nom d'utilisateur</label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  autoComplete="email"
+                  type="text"
+                  id="identifier"
+                  name="identifier"
+                  autoComplete="username"
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Adresse email"
-                  value={credentials.email}
+                  placeholder="E-mail ou Nom d'utilisateur"
+                  value={credentials.identifier}
                   onChange={handleChange}
                 />
               </div>

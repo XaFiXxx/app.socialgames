@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
@@ -16,6 +16,7 @@ function Register() {
     birthday: "", // Sera une chaîne de caractères au format 'YYYY-MM-DD'
   });
 
+  const [errors, setErrors] = useState({}); // Initialisation des erreurs
   const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
@@ -32,6 +33,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({}); // Réinitialisation des erreurs
 
     // Crée un objet FormData et y ajoute les valeurs du formulaire
     const data = new FormData();
@@ -51,8 +53,11 @@ function Register() {
       toast.success("Inscription réussie !");
       navigate("/login");
     } catch (error) {
-      toast.error("Erreur lors de l'inscription.");
-      console.error("Erreur lors de l'inscription:", error.response || error);
+      if (error.response && error.response.status === 400) {
+        setErrors(error.response.data); // Capture des erreurs spécifiques
+      } else {
+        toast.error("Erreur lors de l'inscription.");
+      }
     }
   };
 
@@ -68,13 +73,6 @@ function Register() {
   return (
     <div className="min-h-screen bg-gray-900 flex justify-center items-center px-6">
       <div className="max-w-md w-full space-y-8">
-        <ToastContainer
-          position="bottom-right"
-          autoClose={2000}
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-        />
         <div className="bg-gray-800 text-white shadow-xl rounded px-10 py-12">
           <h2 className="text-center text-3xl font-extrabold">
             Créez votre compte
@@ -94,6 +92,9 @@ function Register() {
                 value={formData.username}
                 onChange={handleChange}
               />
+              {errors.username && (
+                <p className="text-red-500 text-sm mt-2">{errors.username[0]}</p>
+              )}
             </div>
             <div>
               <label htmlFor="name" className="sr-only">
@@ -109,6 +110,9 @@ function Register() {
                 value={formData.name}
                 onChange={handleChange}
               />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-2">{errors.name[0]}</p>
+              )}
             </div>
             <div>
               <label htmlFor="surname" className="sr-only">
@@ -124,6 +128,9 @@ function Register() {
                 value={formData.surname}
                 onChange={handleChange}
               />
+              {errors.surname && (
+                <p className="text-red-500 text-sm mt-2">{errors.surname[0]}</p>
+              )}
             </div>
             <div>
               <label htmlFor="email" className="sr-only">
@@ -139,6 +146,9 @@ function Register() {
                 value={formData.email}
                 onChange={handleChange}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-2">{errors.email[0]}</p>
+              )}
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
@@ -154,6 +164,9 @@ function Register() {
                 value={formData.password}
                 onChange={handleChange}
               />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-2">{errors.password[0]}</p>
+              )}
             </div>
             <div>
               <label htmlFor="location" className="sr-only">
@@ -188,6 +201,9 @@ function Register() {
                 value={formData.birthday}
                 onChange={handleChange}
               />
+              {errors.birthday && (
+                <p className="text-red-500 text-sm mt-2">{errors.birthday[0]}</p>
+              )}
             </div>
             <div>
               <label
