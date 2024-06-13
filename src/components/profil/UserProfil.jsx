@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import api from '../../axiosConfig';
 import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Posts from "../posts/Posts";
 import Jeux from "./Jeux";
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function UserProfile() {
   const { id, username } = useParams();
@@ -14,8 +15,8 @@ function UserProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const userString = localStorage.getItem("user");
+        const token = Cookies.get("token");
+        const userString = Cookies.get("user");
         const user = JSON.parse(userString);
 
         const response = await api.get(
@@ -42,7 +43,7 @@ function UserProfile() {
 
   const handleFollowToggle = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       await api.post(
         `/api/user/follow/${id}`,
         { follow: !isFollowing },

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from '../../axiosConfig';
+import Cookies from "js-cookie"; // Importer js-cookie
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import { CommentInput, CommentList } from "./comments";
 
@@ -12,11 +13,12 @@ function Post({ post }) {
 
   const addComment = async (text) => {
     try {
+      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
       const response = await api.post(
         `/api/post/${post.id}/comment`,
         { content: text },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setComments([response.data.comment, ...comments]); // Ajouter le nouveau commentaire en haut
@@ -27,11 +29,12 @@ function Post({ post }) {
 
   const handleLike = async () => {
     try {
+      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
       const response = await api.post(
         `/api/post/${post.id}/like`,
         {},
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       if (response.data.message === "Post liked") {

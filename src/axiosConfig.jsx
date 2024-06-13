@@ -24,12 +24,29 @@ api.interceptors.request.use(
 // Ajouter un intercepteur pour vérifier les réponses 401 et afficher un message
 api.interceptors.response.use(
   response => response,
-  error => {
+  async error => {
     const { response } = error;
     if (response && response.status === 401) {
+      console.log('Token expired. Attempting to log out.');
+
+      // Envoyer une requête de révocation de token
+      try {
+        const token = Cookies.get('token');
+        if (token) {
+          console.log('Revoking token:', token);
+          await axios.post(`${process.env.REACT_APP_API_URL}/api/logout`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          console.log('Token revoked successfully.');
+        }
+      } catch (err) {
+        console.error('Failed to revoke token:', err);
+      }
+
       Cookies.remove('token');
       Cookies.remove('user');
-      
+      console.log('Cookies removed.');
+
       confirmAlert({
         title: 'Session Expirée',
         message: 'Votre session a expiré. Vous allez être redirigé vers la page de connexion.',

@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import Cookies from "js-cookie";
+import api from "../axiosConfig";
 
 const AuthContext = createContext(null);
 
@@ -40,15 +41,27 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const logout = useCallback(() => {
-    Cookies.remove("token");
-    Cookies.remove("user");
-    setAuth({
-      isAuthenticated: false,
-      user: null,
-      token: "",
-    });
-    window.location.href = "/login";
+  const logout = useCallback(async () => {
+    try {
+      await api.post(
+        "/api/logout",
+        {},
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        }
+      );
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    } finally {
+      Cookies.remove("token");
+      Cookies.remove("user");
+      setAuth({
+        isAuthenticated: false,
+        user: null,
+        token: "",
+      });
+      window.location.href = "/login";
+    }
   }, []);
 
   return (

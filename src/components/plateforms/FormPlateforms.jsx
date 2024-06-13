@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function FormPlateforms({ onSave }) {
   const [platforms, setPlatforms] = useState([]);
@@ -9,8 +10,8 @@ function FormPlateforms({ onSave }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
       try {
+        const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
         const [allPlatformsResponse, userPlatformsResponse] = await Promise.all(
           [
             api.get("/api/platforms", {
@@ -26,7 +27,7 @@ function FormPlateforms({ onSave }) {
           new Set(userPlatformsResponse.data.map((p) => p.id))
         );
       } catch (error) {
-        console.error("Error fetching platforms:", error);
+        console.error("Erreur lors de la récupération des plateformes:", error);
         if (error.response) {
           toast.error(
             `Erreur lors de la récupération: ${error.response.data.message}`
@@ -53,8 +54,8 @@ function FormPlateforms({ onSave }) {
   };
 
   const submitPlatforms = async () => {
-    const token = localStorage.getItem("token");
     try {
+      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
       await api.post(
         "/api/user/update/platforms",
         {
@@ -71,7 +72,7 @@ function FormPlateforms({ onSave }) {
         console.error("onSave prop is not a function or not provided.");
       }
     } catch (error) {
-      console.error("Error updating platforms:", error);
+      console.error("Erreur lors de la mise à jour des plateformes:", error);
       if (error.response) {
         toast.error(
           `Erreur lors de la mise à jour: ${error.response.data.message}`

@@ -3,6 +3,7 @@ import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,7 +22,7 @@ function SearchBar() {
       return;
     }
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       const response = await api.get(
         `/api/search/suggestions?query=${query}`,
         {
@@ -80,7 +81,7 @@ function SearchBar() {
     }
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       const response = await api.get(
         `/api/search?query=${searchTerm}`,
         {

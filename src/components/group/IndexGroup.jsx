@@ -4,6 +4,7 @@ import CardGroup from "./CardGroup"; // Assurez-vous que le chemin d'importation
 import CreateGroup from "./CreateGroup"; // Importez le nouveau composant
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie"; // Importer js-cookie
 
 const IndexGroup = () => {
   const [groups, setGroups] = useState([]);
@@ -14,7 +15,7 @@ const IndexGroup = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
         const response = await api.get("/api/groups", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,7 +31,7 @@ const IndexGroup = () => {
 
     const fetchGames = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
         const response = await api.get("/api/games/index", {
           headers: {
             Authorization: `Bearer ${token}`,

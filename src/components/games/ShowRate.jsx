@@ -3,8 +3,9 @@ import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaUser, FaStar } from "react-icons/fa"; // Import an icon for user indication
+import Cookies from 'js-cookie'; // Importer js-cookie
 
-const ShowRate = ({ reviews, userId, token, fetchGame }) => {
+const ShowRate = ({ reviews, userId, fetchGame }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editRating, setEditRating] = useState(0);
   const [editReview, setEditReview] = useState("");
@@ -24,6 +25,7 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
   };
 
   const handleUpdate = async (gameId) => {
+    const token = Cookies.get("token"); // Utiliser Cookies pour récupérer le token
     try {
       await api.post(
         `/api/games/${gameId}/rate/update`,
@@ -44,6 +46,7 @@ const ShowRate = ({ reviews, userId, token, fetchGame }) => {
   };
 
   const handleDelete = async (gameId, reviewId) => {
+    const token = Cookies.get("token"); // Utiliser Cookies pour récupérer le token
     confirmAlert({
       title: "Confirmer la suppression",
       message: "Êtes-vous sûr de vouloir supprimer cet avis ?",

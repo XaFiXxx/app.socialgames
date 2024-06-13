@@ -5,10 +5,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Rating from "./Rating";
 import ShowRate from "./ShowRate";
+import Cookies from 'js-cookie'; // Importer js-cookie
 
 const ShowGame = () => {
   const { id, name } = useParams();
-  const userStr = localStorage.getItem("user");
+  const userStr = Cookies.get("user"); // Utiliser Cookies pour récupérer les informations utilisateur
 
   const user = userStr ? JSON.parse(userStr) : null;
   const userId = user ? user.id : null;
@@ -19,7 +20,7 @@ const ShowGame = () => {
   console.log("User ID:", userId);
 
   const fetchGame = useCallback(async () => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token"); // Utiliser Cookies pour récupérer le token
     try {
       const response = await api.get(`/api/game/${id}/${name}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -41,7 +42,7 @@ const ShowGame = () => {
   }, [fetchGame]);
 
   const toggleFollow = useCallback(async () => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token"); // Utiliser Cookies pour récupérer le token
     if (isLoading) return;
 
     setIsLoading(true);
@@ -133,7 +134,7 @@ const ShowGame = () => {
               userId={userId}
               initialRating={0}
               initialReview=""
-              token={localStorage.getItem("token")}
+              token={Cookies.get("token")} // Utiliser Cookies pour récupérer le token
               fetchGame={fetchGame} // Pass fetchGame to Rating
             />
           </div>
@@ -141,7 +142,7 @@ const ShowGame = () => {
             <ShowRate
               reviews={game.reviews}
               userId={userId}
-              token={localStorage.getItem("token")}
+              token={Cookies.get("token")} // Utiliser Cookies pour récupérer le token
               fetchGame={fetchGame}
             />
           </div>

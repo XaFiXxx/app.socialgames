@@ -3,6 +3,7 @@ import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from 'js-cookie'; // Importer js-cookie
 import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
 
@@ -13,7 +14,7 @@ const ShowGroup = () => {
   const [error, setError] = useState(null);
 
   const fetchGroup = useCallback(async () => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     try {
       const response = await api.get(`/api/group/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -33,7 +34,7 @@ const ShowGroup = () => {
   }, [fetchGroup]);
 
   const handleFollowGroup = async () => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     try {
       const response = await api.post(`/api/group/${id}/follow`, {}, {
         headers: { Authorization: `Bearer ${token}` },

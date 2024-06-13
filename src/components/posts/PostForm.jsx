@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 import { toast } from "react-toastify";
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function PostForm({ groupId = null }) {
   const [postContent, setPostContent] = useState("");
@@ -29,8 +30,8 @@ function PostForm({ groupId = null }) {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
+    const user = JSON.parse(Cookies.get("user"));
     const user_id = user.id;
 
     const formData = new FormData();

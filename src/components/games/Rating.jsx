@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import Cookies from 'js-cookie'; // Importer js-cookie
 
 const Rating = ({
   gameId,
   userId,
   initialRating,
   initialReview,
-  token,
   fetchGame,
 }) => {
   const [rating, setRating] = useState(initialRating);
@@ -16,6 +16,7 @@ const Rating = ({
 
   const submitRatingAndReview = async () => {
     try {
+      const token = Cookies.get("token"); // Utiliser Cookies pour récupérer le token
       const response = await api.post(
         `/api/games/${gameId}/rate`,
         { game_id: gameId, user_id: userId, rating, review },

@@ -7,6 +7,7 @@ import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
 import EditProfile from "./EditProfile"; // Assurez-vous que le chemin est correct
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function Profile() {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ function Profile() {
     const fetchData = async () => {
       if (user?.id) {
         try {
-          const token = localStorage.getItem("token");
+          const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
           const response = await api.get(
             `/api/users/${user.id}/profile`,
             {
@@ -70,7 +71,7 @@ function Profile() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
       const response = await api.post(
         imageType === "avatar" ? '/api/user/update/profil_img' : '/api/user/update/cover_img',
         formData,

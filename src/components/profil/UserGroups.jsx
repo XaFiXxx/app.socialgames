@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import CreateGroup from "../group/CreateGroup"; // Assurez-vous que le chemin d'importation est correct
+import Cookies from "js-cookie"; // Importer js-cookie
 
 function UserGroups() {
   const [groups, setGroups] = useState([]);
@@ -16,7 +17,7 @@ function UserGroups() {
 
   useEffect(() => {
     const fetchUserGroups = async () => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       try {
         const response = await api.get(
           "/api/user/groups",
@@ -37,7 +38,7 @@ function UserGroups() {
 
     const fetchGames = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = Cookies.get("token");
         const response = await api.get("/api/games/index", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,7 +63,7 @@ function UserGroups() {
           {
             label: "Oui",
             onClick: async () => {
-              const token = localStorage.getItem("token");
+              const token = Cookies.get("token");
               try {
                 await api.post(`/api/group/${groupId}/delete`, {}, {
                   headers: { Authorization: `Bearer ${token}` },

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../../axiosConfig";
+import Cookies from "js-cookie"; // Importer js-cookie
 
 const CreateGroup = ({ games, onCreateGroup, onClose }) => {
   const [newGroupName, setNewGroupName] = useState("");
@@ -31,10 +32,11 @@ const CreateGroup = ({ games, onCreateGroup, onClose }) => {
     formData.append("privacy", newGroupPrivacy);
 
     try {
+      const token = Cookies.get("token"); // Récupérer le token des cookies
       const response = await api.post("/api/group/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       onCreateGroup(response.data); // Passer directement les données du groupe créé

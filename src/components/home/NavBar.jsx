@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import SearchBar from "../recherches/SearchBar";
 
 function Navbar() {
-  const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState(null);
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    // Pas besoin de navigate("/login") ici
   };
 
   const openDropdown = () => {

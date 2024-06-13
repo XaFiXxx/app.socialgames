@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
+
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

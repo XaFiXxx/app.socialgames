@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie"; // Importer js-cookie
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
 function EditProfile({ profileData, onClose, onSave }) {
@@ -25,7 +26,7 @@ function EditProfile({ profileData, onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
       const response = await api.post('/api/users/update-profile', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
