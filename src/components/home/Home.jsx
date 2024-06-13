@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
 import GameCarousel from "./GameCarousel";
+import Cookies from 'js-cookie'; // Importer js-cookie
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -14,7 +15,8 @@ function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("token");
+        // On suppose que l'utilisateur est authentifié et que le token est dans les cookies
+        const token = Cookies.get("token");
         const response = await api.get("/api/home", {
           headers: { Authorization: `Bearer ${token}` },
         });

@@ -1,53 +1,61 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [auth, setAuth] = useState({
-        isAuthenticated: !!localStorage.getItem('token'), // Vérifie si un token est stocké et définit isAuthenticated en conséquence
-        user: JSON.parse(localStorage.getItem('user')) || null, // Récupère l'utilisateur stocké dans localStorage, si disponible
-        token: localStorage.getItem('token') || ''
+  const [auth, setAuth] = useState({
+    isAuthenticated: !!Cookies.get("token"),
+    user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
+    token: Cookies.get("token") || "",
+  });
+
+  useEffect(() => {
+    const user = Cookies.get("user");
+    const token = Cookies.get("token");
+
+    if (token && user) {
+      setAuth({
+        isAuthenticated: true,
+        user: JSON.parse(user),
+        token: token,
+      });
+    }
+  }, []);
+
+  const login = (user, token) => {
+    const expirationMinutes = 5 / 1440; // Expiration des cookies à 5 minutes pour les tests
+    Cookies.set("token", token, { expires: expirationMinutes });
+    Cookies.set("user", JSON.stringify(user), { expires: expirationMinutes });
+    setAuth({
+      isAuthenticated: true,
+      user: user,
+      token: token,
     });
+  };
 
-    // Effectue une mise à jour de l'état lors de la récupération initiale de la page pour synchroniser l'état avec le localStorage
-    useEffect(() => {
-        const user = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
+  const logout = useCallback(() => {
+    Cookies.remove("token");
+    Cookies.remove("user");
+    setAuth({
+      isAuthenticated: false,
+      user: null,
+      token: "",
+    });
+    window.location.href = "/login";
+  }, []);
 
-        if (token && user) {
-            setAuth({
-                isAuthenticated: true,
-                user: JSON.parse(user),
-                token: token
-            });
-        }
-    }, []);
-
-    const login = (user, token) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user)); // Stocke également les informations de l'utilisateur dans localStorage
-        setAuth({
-            isAuthenticated: true,
-            user: user,
-            token: token
-        });
-    };
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user'); // Supprime également les informations de l'utilisateur de localStorage
-        setAuth({
-            isAuthenticated: false,
-            user: null,
-            token: ''
-        });
-    };
-
-    return (
-        <AuthContext.Provider value={{ ...auth, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ ...auth, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

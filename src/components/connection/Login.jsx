@@ -24,11 +24,11 @@ function Login() {
       return;
     }
     try {
+      // Obtenir le token CSRF
+      await api.get('/sanctum/csrf-cookie');
+      // Soumettre les informations de connexion
       const response = await api.post('/api/login', credentials);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      login(response.data.user, response.data.token);
-      toast.success('Connexion réussie !');
+      login(response.data.user, response.data.token); // Utiliser uniquement les données de l'utilisateur
       navigate('/');
     } catch (err) {
       console.error("Erreur lors de la connexion", err.response);
