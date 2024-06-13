@@ -6,6 +6,8 @@ import React, {
   useCallback,
 } from "react";
 import Cookies from "js-cookie";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import api from "../axiosConfig";
 
 const AuthContext = createContext(null);
@@ -16,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
     token: Cookies.get("token") || "",
   });
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     const user = Cookies.get("user");
@@ -28,10 +31,31 @@ export const AuthProvider = ({ children }) => {
         token: token,
       });
     }
+
+    const checkTokenExpiration = async () => {
+      try {
+        const response = await api.get("/api/user"); // Endpoint qui nécessite une authentification
+        if (response.status === 401) {
+          handleLogout(true);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          handleLogout(true);
+        }
+      }
+    };
+
+    // Vérification périodique du token toutes les 30 secondes
+    const intervalId = setInterval(() => {
+      checkTokenExpiration();
+    }, 30000);
+
+    // Nettoyage de l'intervalle lorsque le composant est démonté
+    return () => clearInterval(intervalId);
   }, []);
 
   const login = (user, token) => {
-    const expirationMinutes = 30 / 1440; // Expiration des cookies à 5 minutes pour les tests
+    const expirationMinutes = 1 / 1440; // Expiration des cookies à 1 minute pour les tests
     Cookies.set("token", token, { expires: expirationMinutes });
     Cookies.set("user", JSON.stringify(user), { expires: expirationMinutes });
     setAuth({
@@ -41,28 +65,54 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const logout = useCallback(async () => {
+  const handleLogout = useCallback(async (expired = false) => {
     try {
-      await api.post(
-        "/api/logout",
-        {},
-        {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-        }
-      );
+      const token = Cookies.get("token");
+      if (token) {
+        await api.post(
+          "/api/logout",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
     } catch (error) {
       console.error("Failed to logout:", error);
-    } finally {
-      Cookies.remove("token");
-      Cookies.remove("user");
-      setAuth({
-        isAuthenticated: false,
-        user: null,
-        token: "",
+    }
+
+    Cookies.remove("token");
+    Cookies.remove("user");
+    setAuth({
+      isAuthenticated: false,
+      user: null,
+      token: "",
+    });
+
+    if (expired) {
+      confirmAlert({
+        title: "Session Expirée",
+        message:
+          "Votre session a expiré. Vous allez être redirigé vers la page de connexion.",
+        buttons: [
+          {
+            label: "OK",
+            onClick: () => {
+              window.location.href = "/"; // Redirige immédiatement
+            },
+          },
+        ],
+        closeOnEscape: false,
+        closeOnClickOutside: false,
       });
+    } else {
       window.location.href = "/";
     }
   }, []);
+
+  const logout = useCallback(async () => {
+    await handleLogout();
+  }, [handleLogout]);
 
   return (
     <AuthContext.Provider value={{ ...auth, login, logout }}>
