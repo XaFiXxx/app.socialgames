@@ -54,7 +54,7 @@ api.interceptors.response.use(
           {
             label: 'OK',
             onClick: () => {
-              window.location.href = '/login'; // Redirige immédiatement
+              window.location.href = '/'; // Redirige immédiatement
             }
           }
         ],

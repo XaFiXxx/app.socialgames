@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (user, token) => {
-    const expirationMinutes = 5 / 1440; // Expiration des cookies à 5 minutes pour les tests
+    const expirationMinutes = 30 / 1440; // Expiration des cookies à 5 minutes pour les tests
     Cookies.set("token", token, { expires: expirationMinutes });
     Cookies.set("user", JSON.stringify(user), { expires: expirationMinutes });
     setAuth({
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
         user: null,
         token: "",
       });
-      window.location.href = "/login";
+      window.location.href = "/";
     }
   }, []);
 
