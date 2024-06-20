@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
 
-
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -35,6 +34,9 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({}); // Réinitialisation des erreurs
+
+    // Obtenir le token CSRF
+    await api.get('/sanctum/csrf-cookie');
 
     // Crée un objet FormData et y ajoute les valeurs du formulaire
     const data = new FormData();

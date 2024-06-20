@@ -11,6 +11,8 @@ function UserProfile() {
   const { id, username } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFriend, setIsFriend] = useState(false); // Nouvel état pour vérifier si l'utilisateur est déjà un ami
+  const [hasSentFriendRequest, setHasSentFriendRequest] = useState(false); // Nouvel état pour vérifier si la demande d'ami a déjà été envoyée
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,12 +26,14 @@ function UserProfile() {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "X-User-Id": user.id, // Utiliser l'ID de l'objet utilisateur
+              "X-User-Id": user.id, // Utiliser l'ID de l'utilisateur
             },
           }
         );
         setProfileData(response.data);
         setIsFollowing(response.data.isFollowing);
+        setIsFriend(response.data.isFriend); // Supposons que l'API renvoie isFriend
+        setHasSentFriendRequest(response.data.hasSentFriendRequest); // Supposons que l'API renvoie hasSentFriendRequest
         console.log(response.data);
         console.log(response.data.isFollowing);
       } catch (error) {
@@ -60,6 +64,24 @@ function UserProfile() {
     } catch (error) {
       console.error("Erreur lors du suivi/désuivi:", error);
       toast.error("Erreur lors de la mise à jour du suivi.");
+    }
+  };
+
+  const handleAddFriend = async () => {
+    try {
+      const token = Cookies.get("token");
+      await api.post(
+        `/api/user/add-friend`,
+        { friend_id: id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setHasSentFriendRequest(true);
+      toast.success("Demande d'ami envoyée.");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la demande d'ami:", error);
+      toast.error("Erreur lors de l'envoi de la demande d'ami.");
     }
   };
 
@@ -96,9 +118,16 @@ function UserProfile() {
           <p className="text-gray-200 mb-4">{profileData.biography}</p>
           <button
             onClick={handleFollowToggle}
-            className={`btn ${isFollowing ? "btn-red" : "btn-blue"}`}
+            className={`px-4 py-2 rounded-lg ${isFollowing ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"} text-white`}
           >
             {isFollowing ? "Unfollow" : "Follow"}
+          </button>
+          <button
+            onClick={handleAddFriend}
+            className={`px-4 py-2 rounded-lg ml-4 ${isFriend ? "bg-gray-600 hover:bg-gray-700" : hasSentFriendRequest ? "bg-yellow-600 hover:bg-yellow-700" : "bg-green-600 hover:bg-green-700"} text-white`}
+            disabled={isFriend || hasSentFriendRequest} // Désactiver le bouton si déjà ami ou demande envoyée
+          >
+            {isFriend ? "Vous êtes déjà amis" : hasSentFriendRequest ? "Demande d'ami envoyée" : "Ajouter comme ami"}
           </button>
         </div>
 

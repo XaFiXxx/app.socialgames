@@ -5,6 +5,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import NotificationListener from "./components/NotificationListener";
 import Home from "./components/home/Home";
 import Register from "./components/connection/Register";
 import Login from "./components/connection/Login";
@@ -19,6 +20,7 @@ import ShowGame from "./components/games/ShowGame";
 import IndexGroup from "./components/group/IndexGroup";
 import ShowGroup from "./components/group/ShowGroup";
 import UserGroups from "./components/profil/UserGroups";
+import FriendRequest from "./components/friends/FriendRequest";
 import "./App.css";
 import Footer from "./components/home/Footer";
 
@@ -38,6 +40,7 @@ function App() {
   return (
     <div className="bg-gray-800 min-h-screen">
       <Router>
+        <NotificationListener /> {/* NotificationListener placé ici */}
         <Routes>
           <Route path="/register" element={<Register />} />
 
@@ -129,6 +132,16 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <ShowGroup />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/friend-requests"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <FriendRequest />
               </ProtectedRoute>
             }
           />

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import SearchBar from "../recherches/SearchBar";
+import FriendRequestModal from "../friends/FriendRequest";
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState(null);
+  const [isFriendRequestModalOpen, setIsFriendRequestModalOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -111,6 +113,12 @@ function Navbar() {
                     Vos groupes
                   </Link>
                   <button
+                    onClick={() => setIsFriendRequestModalOpen(true)}
+                    className="block px-4 py-2 w-full text-left hover:bg-green-700"
+                  >
+                    Demandes d'amis
+                  </button>
+                  <button
                     onClick={handleLogout}
                     className="block px-4 py-2 w-full bg-red-600 text-left hover:bg-green-700"
                   >
@@ -131,6 +139,10 @@ function Navbar() {
           )}
         </div>
       </div>
+
+      {isFriendRequestModalOpen && (
+        <FriendRequestModal onClose={() => setIsFriendRequestModalOpen(false)} />
+      )}
     </nav>
   );
 }

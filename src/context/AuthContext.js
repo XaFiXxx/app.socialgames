@@ -31,31 +31,10 @@ export const AuthProvider = ({ children }) => {
         token: token,
       });
     }
-
-    const checkTokenExpiration = async () => {
-      try {
-        const response = await api.get("/api/user"); // Endpoint qui nécessite une authentification
-        if (response.status === 401) {
-          handleLogout(true);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          handleLogout(true);
-        }
-      }
-    };
-
-    // Vérification périodique du token toutes les 30 secondes
-    const intervalId = setInterval(() => {
-      checkTokenExpiration();
-    }, 30000);
-
-    // Nettoyage de l'intervalle lorsque le composant est démonté
-    return () => clearInterval(intervalId);
   }, []);
 
   const login = (user, token) => {
-    const expirationMinutes = 1 / 1440; // Expiration des cookies à 1 minute pour les tests
+    const expirationMinutes = 60 / 1440; // 60 minutes
     Cookies.set("token", token, { expires: expirationMinutes });
     Cookies.set("user", JSON.stringify(user), { expires: expirationMinutes });
     setAuth({
@@ -63,6 +42,9 @@ export const AuthProvider = ({ children }) => {
       user: user,
       token: token,
     });
+
+    // Planifier la vérification de l'expiration du token
+    setTimeout(() => setIsExpired(true), expirationMinutes * 1440 * 60 * 1000);
   };
 
   const handleLogout = useCallback(async (expired = false) => {
@@ -113,6 +95,26 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     await handleLogout();
   }, [handleLogout]);
+
+  useEffect(() => {
+    if (isExpired) {
+      handleLogout(true);
+    }
+  }, [isExpired, handleLogout]);
+
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      const checkTokenExpiration = () => {
+        const token = Cookies.get("token");
+        if (!token) {
+          setIsExpired(true);
+        }
+      };
+
+      const interval = setInterval(checkTokenExpiration, 1000); // Vérifie toutes les secondes
+      return () => clearInterval(interval);
+    }
+  }, [auth.isAuthenticated]);
 
   return (
     <AuthContext.Provider value={{ ...auth, login, logout }}>
