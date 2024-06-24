@@ -63,8 +63,12 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to logout:", error);
     }
 
-    Cookies.remove("token");
-    Cookies.remove("user");
+    // Supprimer les cookies
+    Cookies.remove("token", { path: "/" });
+    Cookies.remove("user", { path: "/" });
+    Cookies.remove("XSRF-TOKEN", { path: "/" });
+    Cookies.remove("laravel_session", { path: "/" });
+
     setAuth({
       isAuthenticated: false,
       user: null,

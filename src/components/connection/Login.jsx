@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import axios from 'axios';
 
 function Login() {
   const navigate = useNavigate();
@@ -25,10 +25,26 @@ function Login() {
     }
     try {
       // Obtenir le token CSRF
-      await api.get('/sanctum/csrf-cookie');
+      await axios.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`, {
+        withCredentials: true,
+      });
+
+      const xsrfToken = document.cookie.split(';').find(cookie => cookie.trim().startsWith('XSRF-TOKEN='));
+      const csrfToken = xsrfToken ? decodeURIComponent(xsrfToken.split('=')[1]) : null;
+
       // Soumettre les informations de connexion
-      const response = await api.post('/api/login', credentials);
-      login(response.data.user, response.data.token); // Utiliser uniquement les données de l'utilisateur
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/login`,
+        credentials,
+        {
+          withCredentials: true,
+          headers: {
+            'X-XSRF-TOKEN': csrfToken,
+          },
+        }
+      );
+
+      login(response.data.user, response.data.token);
       navigate('/');
     } catch (err) {
       console.error("Erreur lors de la connexion", err.response);

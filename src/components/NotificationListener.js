@@ -5,13 +5,18 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 
 const NotificationListener = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [echo, setEcho] = useState(null);
 
   useEffect(() => {
     const setupEcho = async () => {
+      if (!user || !token) {
+        console.log("User is not authenticated, skipping Echo initialization.");
+        return;
+      }
+
       if (!echo) {
-        const echoInstance = await initializeEcho();
+        const echoInstance = await initializeEcho(token);
         setEcho(echoInstance);
         console.log("Echo initialized:", echoInstance);
       }
@@ -25,7 +30,7 @@ const NotificationListener = () => {
         console.log("Echo disconnected");
       }
     };
-  }, [echo]);
+  }, [user, token, echo]);
 
   useEffect(() => {
     if (!user || !echo) {

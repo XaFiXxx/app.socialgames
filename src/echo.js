@@ -5,15 +5,17 @@ import Cookies from "js-cookie";
 
 window.Pusher = Pusher;
 
-const initializeEcho = async () => {
+const initializeEcho = async (authToken) => {
   try {
-    console.log("Fetching CSRF cookie...");
-    await axios.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`, {
-      withCredentials: true,
-    });
+    let csrfToken = Cookies.get("XSRF-TOKEN");
 
-    const csrfToken = Cookies.get("XSRF-TOKEN");
-    const authToken = Cookies.get("token");
+    if (!csrfToken) {
+      console.log("Fetching CSRF cookie...");
+      await axios.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`, {
+        withCredentials: true,
+      });
+      csrfToken = Cookies.get("XSRF-TOKEN");
+    }
 
     if (!authToken) {
       throw new Error("Token d'authentification non trouvé dans les cookies");

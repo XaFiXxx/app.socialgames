@@ -3,16 +3,16 @@ import Cookies from 'js-cookie';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
-  withCredentials: true, // Important pour les cookies
+  withCredentials: true,
 });
 
 // Ajouter un intercepteur pour inclure le token CSRF et le token d'authentification
 api.interceptors.request.use(
-  async config => {
+  config => {
     // Obtenir le token CSRF depuis les cookies
-    const xsrfToken = document.cookie.split(';').find(cookie => cookie.trim().startsWith('XSRF-TOKEN='));
+    const xsrfToken = Cookies.get('XSRF-TOKEN');
     if (xsrfToken) {
-      config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken.split('=')[1]);
+      config.headers['X-XSRF-TOKEN'] = xsrfToken;
     }
     
     // Obtenir le token d'authentification depuis les cookies
