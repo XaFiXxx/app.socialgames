@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Posts from "../posts/Posts";
 import Jeux from "./Jeux";
 import Cookies from "js-cookie"; // Importer js-cookie
+import Friends from "./Friends"; // Importer le composant Friends
 
 function UserProfile() {
   const { id, username } = useParams();
@@ -130,6 +131,9 @@ function UserProfile() {
             {isFriend ? "Vous êtes déjà amis" : hasSentFriendRequest ? "Demande d'ami envoyée" : "Ajouter comme ami"}
           </button>
         </div>
+
+        {/* Utiliser le composant Friends pour afficher les amis */}
+        <Friends friends={profileData.friends} />
 
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
