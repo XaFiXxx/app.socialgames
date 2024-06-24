@@ -18,7 +18,6 @@ const NotificationListener = () => {
       if (!echo) {
         const echoInstance = await initializeEcho(token);
         setEcho(echoInstance);
-        console.log("Echo initialized:", echoInstance);
       }
     };
 
@@ -40,13 +39,11 @@ const NotificationListener = () => {
     const channel = echo.private(`friends.${user.id}`);
     channel.listen("FriendRequestSent", (notification) => {
       toast.info(`Notification: ${notification.message}`);
-      console.log("Notification received:", notification);
     });
 
     return () => {
       if (channel) {
         channel.stopListening("FriendRequestSent");
-        console.log("Stopped listening to FriendRequestSent");
       }
     };
   }, [user, echo]);

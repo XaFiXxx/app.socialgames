@@ -1,13 +1,16 @@
+// src/components/profile/Profile.jsx
+
 import React, { useState, useEffect } from "react";
-import api from '../../axiosConfig'; // Assurez-vous que le chemin est correct
+import api from '../../axiosConfig';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import Jeux from "./Jeux";
 import PostForm from "../posts/PostForm";
 import Posts from "../posts/Posts";
-import EditProfile from "./EditProfile"; // Assurez-vous que le chemin est correct
+import EditProfile from "./EditProfile";
+import Friends from "./Friends"; // Import the Friends component
 import 'react-toastify/dist/ReactToastify.css';
-import Cookies from "js-cookie"; // Importer js-cookie
+import Cookies from "js-cookie";
 
 function Profile() {
   const { user } = useAuth();
@@ -28,19 +31,16 @@ function Profile() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageType, setImageType] = useState("");
-  const [isEditing, setIsEditing] = useState(false); // Nouvel état pour l'édition
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (user?.id) {
         try {
-          const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
-          const response = await api.get(
-            `/api/users/${user.id}/profile`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const token = Cookies.get("token");
+          const response = await api.get(`/api/users/${user.id}/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           if (response.data) {
             setProfileData(response.data);
           } else {
@@ -71,7 +71,7 @@ function Profile() {
 
     try {
       setLoading(true);
-      const token = Cookies.get("token"); // Utiliser js-cookie pour récupérer le token
+      const token = Cookies.get("token");
       const response = await api.post(
         imageType === "avatar" ? '/api/user/update/profil_img' : '/api/user/update/cover_img',
         formData,
@@ -117,7 +117,6 @@ function Profile() {
   };
 
   const handleProfileUpdate = () => {
-    // Reload the page to get updated profile data
     window.location.reload();
   };
 
@@ -129,9 +128,7 @@ function Profile() {
       <div className="container mx-auto p-4">
         <div className="relative mb-6">
           <img
-            src={`${process.env.REACT_APP_API_URL}/${
-              profileData.cover_url || "img/defaultCover.jpg"
-            }`}
+            src={`${process.env.REACT_APP_API_URL}/${profileData.cover_url}`}
             alt="Couverture"
             className="w-full h-96 object-cover rounded-lg shadow-md"
           />
@@ -216,7 +213,8 @@ function Profile() {
           </button>
         </div>
 
-        {/* Section pour afficher les plateformes */}
+        <Friends friends={profileData.friends} /> {/* Use the Friends component */}
+
         <div className="mt-8">
           <div className="flex flex-wrap justify-center gap-4">
             {profileData.platforms?.map((platform) => (

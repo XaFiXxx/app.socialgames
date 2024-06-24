@@ -3,6 +3,7 @@ import api from '../../axiosConfig';
 import Cookies from "js-cookie"; // Importer js-cookie
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import { CommentInput, CommentList } from "./comments";
+import { Link } from "react-router-dom"; // Importer Link de react-router-dom
 
 // Post Component
 function Post({ post }) {
@@ -62,7 +63,11 @@ function Post({ post }) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <div className="mb-2">
-        <p className="text-gray-800 font-bold">{post.user.username}</p>
+        <Link to={`/profile/${post.user.id}/${post.user.username}`}>
+          <p className="text-gray-800 font-bold hover:underline">
+            {post.user.username}
+          </p>
+        </Link>
       </div>
       <p className="text-gray-600">{post.content}</p>
       {post.image_path && (
