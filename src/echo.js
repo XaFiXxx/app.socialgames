@@ -7,10 +7,11 @@ window.Pusher = Pusher;
 
 const initializeEcho = async () => {
   try {
-    // Obtenir le cookie CSRF de Sanctum
-    await axios.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`);
+    console.log("Fetching CSRF cookie...");
+    await axios.get(`${process.env.REACT_APP_API_URL}/sanctum/csrf-cookie`, {
+      withCredentials: true,
+    });
 
-    // Extraire le jeton CSRF du cookie
     const csrfToken = Cookies.get("XSRF-TOKEN");
     const authToken = Cookies.get("token");
 
@@ -18,6 +19,7 @@ const initializeEcho = async () => {
       throw new Error("Token d'authentification non trouvé dans les cookies");
     }
 
+    console.log("Initializing Echo...");
     const echo = new Echo({
       broadcaster: "pusher",
       key: process.env.REACT_APP_PUSHER_APP_KEY,

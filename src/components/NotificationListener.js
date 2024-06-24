@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import initializeEcho from "../echo"; // Importer la fonction pour initialiser Echo
+import initializeEcho from "../echo";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
@@ -10,16 +10,19 @@ const NotificationListener = () => {
 
   useEffect(() => {
     const setupEcho = async () => {
-      const echoInstance = await initializeEcho();
-      setEcho(echoInstance);
+      if (!echo) {
+        const echoInstance = await initializeEcho();
+        setEcho(echoInstance);
+        console.log("Echo initialized:", echoInstance);
+      }
     };
 
     setupEcho();
 
-    // Ajoutez echo comme dépendance pour le hook useEffect de nettoyage
     return () => {
       if (echo) {
         echo.disconnect();
+        console.log("Echo disconnected");
       }
     };
   }, [echo]);
@@ -29,16 +32,16 @@ const NotificationListener = () => {
       return;
     }
 
-    // Abonnez-vous au canal privé pour l'utilisateur connecté
     const channel = echo.private(`friends.${user.id}`);
     channel.listen("FriendRequestSent", (notification) => {
       toast.info(`Notification: ${notification.message}`);
+      console.log("Notification received:", notification);
     });
 
-    // Ajoutez echo et user comme dépendances
     return () => {
       if (channel) {
         channel.stopListening("FriendRequestSent");
+        console.log("Stopped listening to FriendRequestSent");
       }
     };
   }, [user, echo]);
