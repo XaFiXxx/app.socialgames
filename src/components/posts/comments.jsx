@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Importer Link de react-router-dom
 
 export function CommentInput({ onSubmit }) {
   const [comment, setComment] = useState("");
@@ -38,7 +39,10 @@ export function CommentList({ comments }) {
       {comments.map((comment) => (
         <div key={comment.id} className="border-t border-gray-300 pt-2">
           <p className="text-gray-600">
-            <strong>{comment.user.username}</strong>: {comment.content}
+            <Link to={`/profile/${comment.user.id}/${comment.user.username}`}>
+              <strong className="text-blue-500 hover:underline">{comment.user.username}</strong>
+            </Link>
+            : {comment.content}
           </p>
         </div>
       ))}
